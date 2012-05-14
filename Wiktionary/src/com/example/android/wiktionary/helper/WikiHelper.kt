@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.text.Format
 import kotlin.dom.get
+import android.util.Log
 
 /**
  * Created with IntelliJ IDEA.
@@ -164,7 +165,7 @@ class ExtendedWikiHelperKt() : SimpleWikiHelper() {
                     return foundWord
                 }
             } catch (e : JSONException) {
-                throw IllegalArgumentException("Problem parsing API response", e)
+                Log.e("Problem parsing API response", "", e)
             }
         }
 
