@@ -24,6 +24,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.app.AlertDialog
+import test
 
 class LookupActivity() : Activity(), AnimationListener {
 
@@ -57,29 +58,32 @@ class LookupActivity() : Activity(), AnimationListener {
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
 
-        setContentView(R.layout.lookup);
+        val byteArray = ByteArray(10)
+//        byteArray.take(5)
+
+        setContentView(R.layout.lookup)
 
         // Load animations used to show/hide progress bar
-        mSlideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
-        mSlideOut = AnimationUtils.loadAnimation(this, R.anim.slide_out);
+        mSlideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in)
+        mSlideOut = AnimationUtils.loadAnimation(this, R.anim.slide_out)
 
         // Listen for the "in" animation so we make the progress bar visible
         // only after the sliding has finished.
-        mSlideIn?.setAnimationListener(this);
+        mSlideIn?.setAnimationListener(this)
 
-        mTitleBar = findViewById(R.id.title_bar);
-        mTitle = findViewById(R.id.title) as TextView;
-        mProgress = findViewById(R.id.progress) as ProgressBar;
-        mWebView = findViewById(R.id.webview) as WebView;
+        mTitleBar = findViewById(R.id.title_bar)
+        mTitle = findViewById(R.id.title) as TextView
+        mProgress = findViewById(R.id.progress) as ProgressBar
+        mWebView = findViewById(R.id.webview) as WebView
 
         // Make the view transparent to show background
-        mWebView?.setBackgroundColor(0);
+        mWebView?.setBackgroundColor(0)
 
         // Prepare User-Agent string for wiki actions
-        //       ExtendedWikiHelperKt.prepareUserAgent(this);
+        //       ExtendedWikiHelperKt.prepareUserAgent(this)
 
         // Handle incoming intents as possible searches or links
-        onNewIntent(getIntent());
+        onNewIntent(getIntent())
     }
 
 
@@ -89,17 +93,17 @@ class LookupActivity() : Activity(), AnimationListener {
 
             // Compare against last pressed time, and if user hit multiple times
             // in quick succession, we should consider bailing out early.
-            val currentPress = SystemClock.uptimeMillis();
+            val currentPress = SystemClock.uptimeMillis()
             if (currentPress - mLastPress < BACK_THRESHOLD) {
-                return super<Activity>.onKeyDown(keyCode, event);
+                return super<Activity>.onKeyDown(keyCode, event)
             }
-            mLastPress = currentPress;
+            mLastPress = currentPress
 
             // Pop last entry off stack and start loading
-            val lastEntry = mHistory.pop().sure();
-            startNavigating(lastEntry, false);
+            val lastEntry = mHistory.pop().sure()
+            startNavigating(lastEntry, false)
 
-            return true;
+            return true
         }
 
         // Otherwise fall through to parent
@@ -109,7 +113,7 @@ class LookupActivity() : Activity(), AnimationListener {
     private fun startNavigating(word : String?, val pushHistory : Boolean) {
         // Push any current word onto the history stack
         if (!TextUtils.isEmpty(mEntryTitle) && pushHistory) {
-            mHistory.add(mEntryTitle);
+            mHistory.add(mEntryTitle)
         }
 
         displayText(word)
@@ -117,24 +121,24 @@ class LookupActivity() : Activity(), AnimationListener {
 
 
     protected override fun onNewIntent(intent : Intent?) {
-        val action = intent?.getAction();
+        val action = intent?.getAction()
         if (Intent.ACTION_SEARCH.equals(action)) {
             // Start query for incoming search request
-            val query = intent?.getStringExtra(SearchManager.QUERY);
-            startNavigating(query, true);
+            val query = intent?.getStringExtra(SearchManager.QUERY)
+            startNavigating(query, true)
 
         } else if (Intent.ACTION_VIEW.equals(action)) {
             // Treat as internal link only if valid Uri and host matches
-            val data = intent?.getData();
+            val data = intent?.getData()
             if (data != null && WIKI_LOOKUP_HOST
                     .equals(data.getHost())) {
-                val query = data.getPathSegments()?.get(0);
-                startNavigating(query, true);
+                val query = data.getPathSegments()?.get(0)
+                startNavigating(query, true)
             }
 
         } else {
             // If not recognized, then start showing random word
-            startNavigating(null, true);
+            startNavigating(null, true)
         }
     }
 
@@ -142,9 +146,9 @@ class LookupActivity() : Activity(), AnimationListener {
     * {@inheritDoc}
     */
     public override fun onCreateOptionsMenu(menu : Menu?) : Boolean {
-        val inflater = getMenuInflater().sure();
-        inflater.inflate(R.menu.lookup, menu);
-        return true;
+        val inflater = getMenuInflater().sure()
+        inflater.inflate(R.menu.lookup, menu)
+        return true
     }
 
     /**
@@ -153,16 +157,16 @@ class LookupActivity() : Activity(), AnimationListener {
     public override fun onOptionsItemSelected(item : MenuItem?) : Boolean {
         when (item?.getItemId()) {
             R.id.lookup_search -> {
-                onSearchRequested();
-                return true;
+                onSearchRequested()
+                return true
             }
             R.id.lookup_random -> {
-                startNavigating(null, true);
-                return true;
+                startNavigating(null, true)
+                return true
             }
             R.id.lookup_about -> {
-                showAbout();
-                return true;
+                showAbout()
+                return true
             }
             else -> {
                 return false
@@ -175,53 +179,53 @@ class LookupActivity() : Activity(), AnimationListener {
      */
     protected fun showAbout() {
         // Inflate the about message contents
-        val messageView = getLayoutInflater()?.inflate(R.layout.about, null, false).sure();
+        val messageView = getLayoutInflater()?.inflate(R.layout.about, null, false).sure()
 
         // When linking text, force to always use default color. This works
         // around a pressed color state bug.
-        val textView = messageView.findViewById(R.id.about_credits) as TextView;
-        val defaultColor = textView.getTextColors()?.getDefaultColor();
-        textView.setTextColor(defaultColor.sure());
+        val textView = messageView.findViewById(R.id.about_credits) as TextView
+        val defaultColor = textView.getTextColors()?.getDefaultColor()
+        textView.setTextColor(defaultColor.sure())
 
-        val builder = AlertDialog.Builder(this);
-        builder.setIcon(R.drawable.app_icon);
-        builder.setTitle(R.string.app_name);
-        builder.setView(messageView);
-        builder.create();
-        builder.show();
+        val builder = AlertDialog.Builder(this)
+        builder.setIcon(R.drawable.app_icon)
+        builder.setTitle(R.string.app_name)
+        builder.setView(messageView)
+        builder.create()
+        builder.show()
     }
 
     fun displayText(val word : String?) : String {
-        var query = word;
-        var parsedText : String? = null;
+        var query = word
+        var parsedText : String? = null
 
         // If query word is null, assume request for random word
         if (query == null) {
-            query = ExtendedWikiHelperKt().getRandomWord();
+            query = ExtendedWikiHelperKt().getRandomWord()
         }
 
         if (query != null) {
             // Push our requested word to the title bar
-            //publishProgress(query);
+            //publishProgress(query)
             println(query)
-            val wikiText = ExtendedWikiHelperKt().getPageContent(query.sure(), true);
-            parsedText = ExtendedWikiHelperKt().formatWikiText(wikiText);
+            val wikiText = ExtendedWikiHelperKt().getPageContent(query.sure(), true)
+            parsedText = ExtendedWikiHelperKt().formatWikiText(wikiText)
         }
 
         if (parsedText == null) {
-            parsedText = getString(R.string.empty_result);
+            parsedText = getString(R.string.empty_result)
         }
 
-        setEntryContent(parsedText.sure());
-        return parsedText.sure();
+        setEntryContent(parsedText.sure())
+        return parsedText.sure()
     }
 
     /**
     * Set the title for the current entry.
     */
     public fun setEntryTitle(entryText : String) {
-        mEntryTitle = entryText;
-        mTitle?.setText(mEntryTitle);
+        mEntryTitle = entryText
+        mTitle?.setText(mEntryTitle)
     }
 
     /**
@@ -230,7 +234,7 @@ class LookupActivity() : Activity(), AnimationListener {
      */
     public fun setEntryContent(entryContent : String) {
         mWebView?.loadDataWithBaseURL(WIKI_AUTHORITY, entryContent,
-                MIME_TYPE, ENCODING, null);
+                MIME_TYPE, ENCODING, null)
     }
 
 
@@ -241,7 +245,7 @@ class LookupActivity() : Activity(), AnimationListener {
      * Make the {@link ProgressBar} visible when our in-animation finishes.
      */
     public override fun onAnimationEnd(p0 : Animation?) {
-        mProgress?.setVisibility(View.INVISIBLE);
+        mProgress?.setVisibility(View.INVISIBLE)
     }
     public override fun onAnimationRepeat(p0 : Animation?) {
         // Not interested if the animation repeats

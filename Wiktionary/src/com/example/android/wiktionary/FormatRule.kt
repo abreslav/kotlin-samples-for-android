@@ -14,8 +14,8 @@ class FormatRule(var pattern: String, var mReplaceWith: String, var flags: Int =
     * resulting new string.
     */
     public fun apply(val input: String): String {
-        val m = mPattern.matcher(input);
-        return m?.replaceAll(mReplaceWith).sure();
+        val m = mPattern.matcher(input)
+        return m?.replaceAll(mReplaceWith).sure()
     }
 
 }

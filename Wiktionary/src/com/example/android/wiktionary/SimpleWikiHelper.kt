@@ -16,7 +16,7 @@ import android.util.Log
 open class SimpleWikiHelper {
 
     class object {
-        var instance = SimpleWikiHelper();
+        var instance = SimpleWikiHelper()
     }
 
     val TAG = "SimpleWikiHelper"
@@ -25,8 +25,7 @@ open class SimpleWikiHelper {
     "http://en.wiktionary.org/w/api.php?action=query&prop=revisions&titles=%s&" +
     "rvprop=content&format=json%s"
 
-    val WIKTIONARY_EXPAND_TEMPLATES =
-    "&rvexpandtemplates=true"
+    val WIKTIONARY_EXPAND_TEMPLATES = "&rvexpandtemplates=true"
 
     val HTTP_STATUS_OK = 200
 
@@ -37,33 +36,33 @@ open class SimpleWikiHelper {
     public fun prepareUserAgent(val context : Context) {
         try {
             // Read package name and version number from manifest
-            val manager = context.getPackageManager();
-            val info = manager?.getPackageInfo(context.getPackageName(), 0);
+            val manager = context.getPackageManager()
+            val info = manager?.getPackageInfo(context.getPackageName(), 0)
             sUserAgent = String.format(context.getString(0x7f060003),
-                    info?.packageName, info?.versionName);
+                    info?.packageName, info?.versionName)
 
         } catch(e : NameNotFoundException) {
-           Log.e(TAG, "Couldn't find package information in PackageManager", e);
+            Log.e(TAG, "Couldn't find package information in PackageManager", e)
         }
     }
 
     public fun getPageContent(val title : String, val expandTemplates : Boolean) : String? {
         // Encode page title and expand templates if requested
-        val encodedTitle = Uri.encode(title);
-        val expandClause = if (expandTemplates) WIKTIONARY_EXPAND_TEMPLATES else "";
+        val encodedTitle = Uri.encode(title)
+        val expandClause = if (expandTemplates) WIKTIONARY_EXPAND_TEMPLATES else ""
 
         // Query the API for content
         val content = getUrlContent(String.format(WIKTIONARY_PAGE,
-                encodedTitle, expandClause).sure());
+                encodedTitle, expandClause).sure())
         try {
             // Drill into the JSON response to find the content body
-            val response = JSONObject(content);
-            val query = response.getJSONObject("query");
-            val pages = query?.getJSONObject("pages");
-            val page = pages?.getJSONObject(pages?.keys()?.next() as String);
-            val revisions = page?.getJSONArray("revisions");
-            val revision = revisions?.getJSONObject(0);
-            return revision?.getString("*").sure();
+            val response = JSONObject(content)
+            val query = response.getJSONObject("query")
+            val pages = query?.getJSONObject("pages")
+            val page = pages?.getJSONObject(pages?.keys()?.next() as String)
+            val revisions = page?.getJSONArray("revisions")
+            val revision = revisions?.getJSONObject(0)
+            return revision?.getString("*").sure()
         } catch (e : JSONException) {
             println(content)
             return null
@@ -79,20 +78,20 @@ open class SimpleWikiHelper {
     * @return The raw content returned by the server.
     * @throws ApiException If any connection or server error occurs.
     */
-    public fun getUrlContent(val url : String) : String {
+    public fun getUrlContent(val url : String) : String? {
         // Create client and set our specific user-agent string
         val  client = DefaultHttpClient()
         val request = HttpGet(url)
         request.setHeader("User-Agent", sUserAgent)
 
         try {
-            val response = client.execute(request);
+            val response = client.execute(request)
 
             // Check if server response is valid
-            val status = response?.getStatusLine();
+            val status = response?.getStatusLine()
             if (status?.getStatusCode() != 200) {
-                throw IllegalArgumentException("Invalid response from server: " +
-                status.toString())
+                Log.e("Invalid response from server: " + status.toString(), "")
+                return null
             }
 
             // Pull content stream from response
@@ -113,7 +112,8 @@ open class SimpleWikiHelper {
             return java.lang.String(content.toByteArray()).toString().sure()
 
         } catch (e : IOException ) {
-            throw IllegalArgumentException("Problem communicating with API", e)
+            Log.e("Problem communicating with API", "", e)
+            return null
         }
     }
 }

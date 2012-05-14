@@ -104,32 +104,32 @@ fun init() : ArrayList<FormatRule> {
     // Format header blocks and wrap outside content in ordered list
     val result = ArrayList<FormatRule>()
     result.add(FormatRule("^=+(.+?)=+", "</ol><h2>$1</h2><ol>",
-            Pattern.MULTILINE));
+            Pattern.MULTILINE))
 
     // Indent quoted blocks, handle ordered and bullet lists
     result.add(FormatRule("^#+\\*?:(.+?)$", "<blockquote>$1</blockquote>",
-            Pattern.MULTILINE));
+            Pattern.MULTILINE))
     result.add(FormatRule("^#+:?\\*(.+?)$", "<ul><li>$1</li></ul>",
-            Pattern.MULTILINE));
+            Pattern.MULTILINE))
     result.add(FormatRule("^#+(.+?)$", "<li>$1</li>",
-            Pattern.MULTILINE));
+            Pattern.MULTILINE))
 
     // Add internal links
     result.add(FormatRule("\\[\\[([^:\\|\\]]+)\\]\\]",
-            String.format("<a href=\"%s://%s/$1\">$1</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST).sure()));
+            String.format("<a href=\"%s://%s/$1\">$1</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST).sure()))
     result.add(FormatRule("\\[\\[([^:\\|\\]]+)\\|([^\\]]+)\\]\\]",
-            String.format("<a href=\"%s://%s/$1\">$2</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST).sure()));
+            String.format("<a href=\"%s://%s/$1\">$2</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST).sure()))
 
     // Add bold and italic formatting
-    result.add(FormatRule("'''(.+?)'''", "<b>$1</b>"));
-    result.add(FormatRule("([^'])''([^'].*?[^'])''([^'])", "$1<i>$2</i>$3"));
+    result.add(FormatRule("'''(.+?)'''", "<b>$1</b>"))
+    result.add(FormatRule("([^'])''([^'].*?[^'])''([^'])", "$1<i>$2</i>$3"))
 
     // Remove odd category links and convert remaining links into flat text
     result.add(FormatRule("(\\{+.+?\\}+|\\[\\[[^:]+:[^\\\\|\\]]+\\]\\]|" +
-    "\\[http.+?\\]|\\[\\[Category:.+?\\]\\])", "", Pattern.MULTILINE));
+    "\\[http.+?\\]|\\[\\[Category:.+?\\]\\])", "", Pattern.MULTILINE))
     //            "\\[http.+?\\]|\\[\\[Category:.+?\\]\\])", "", Pattern.MULTILINE | Pattern.DOTALL));
     result.add(FormatRule("\\[\\[([^\\|\\]]+\\|)?(.+?)\\]\\]", "$2",
-            Pattern.MULTILINE));
+            Pattern.MULTILINE))
 
     return result
 }
@@ -148,28 +148,28 @@ class ExtendedWikiHelperKt() : SimpleWikiHelper() {
         var tries = 0;
         while (tries++ < RANDOM_TRIES) {
             // Query the API for a random word
-            val content = getUrlContent(WIKTIONARY_RANDOM);
+            val content = getUrlContent(WIKTIONARY_RANDOM)
             try {
                 // Drill into the JSON response to find the returned word
-                val response = JSONObject(content);
-                val query = response.getJSONObject("query");
-                val random = query?.getJSONArray("random");
-                val word = random?.getJSONObject(0);
-                val foundWord = word?.getString("title");
+                val response = JSONObject(content)
+                val query = response.getJSONObject("query")
+                val random = query?.getJSONArray("random")
+                val word = random?.getJSONObject(0)
+                val foundWord = word?.getString("title")
 
                 // If we found an actual word, and it wasn't rejected by our invalid
                 // filter, then accept and return it.
                 if (foundWord != null &&
                 !sInvalidWord?.matcher(foundWord)?.find().sure()) {
-                    return foundWord;
+                    return foundWord
                 }
             } catch (e : JSONException) {
-                throw IllegalArgumentException("Problem parsing API response", e);
+                throw IllegalArgumentException("Problem parsing API response", e)
             }
         }
 
         // No valid word found in number of tries, so return null
-        return null;
+        return null
     }
 
     /**
@@ -182,42 +182,42 @@ class ExtendedWikiHelperKt() : SimpleWikiHelper() {
     */
     public fun formatWikiText(var wikiText : String?) : String? {
         if (wikiText == null) {
-            return null;
+            return null
         }
 
         // Insert a fake last section into the document so our section splitter
         // can correctly catch the last section.
-        wikiText = wikiText?.concat(STUB_SECTION);
+        wikiText = wikiText?.concat(STUB_SECTION)
 
         // Read through all sections, keeping only those matching our filter,
         // and only including the first entry for each title.
-        val foundSections = HashSet<String>();
-        val builder = StringBuilder();
+        val foundSections = HashSet<String>()
+        val builder = StringBuilder()
 
-        val sectionMatcher = sSectionSplit?.matcher(wikiText);
+        val sectionMatcher = sSectionSplit?.matcher(wikiText)
         while (sectionMatcher?.find().sure()) {
-            val title = sectionMatcher?.group(1);
+            val title = sectionMatcher?.group(1)
             if (!foundSections.contains(title) &&
             sValidSections?.matcher(title)?.matches().sure()) {
-                val sectionContent = sectionMatcher?.group();
-                foundSections.add(title.sure());
-                builder.append(sectionContent);
+                val sectionContent = sectionMatcher?.group()
+                foundSections.add(title.sure())
+                builder.append(sectionContent)
             }
         }
 
         // Our new wiki text is the selected sections only
-        wikiText = builder.toString();
+        wikiText = builder.toString()
 
         // Apply all formatting rules, in order, to the wiki text
         for (rule in sFormatRules) {
-            wikiText = rule.apply(wikiText.sure());
+            wikiText = rule.apply(wikiText.sure())
         }
 
         // Return the resulting HTML with style sheet, if we have content left
         if (!TextUtils.isEmpty(wikiText)) {
-            return STYLE_SHEET + wikiText;
+            return STYLE_SHEET + wikiText
         } else {
-            return null;
+            return null
         }
     }
 
