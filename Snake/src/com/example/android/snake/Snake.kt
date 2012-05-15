@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.view.animation.Animation.AnimationListener
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.R
 
 /**
  * Snake: a simple game that everyone can enjoy.

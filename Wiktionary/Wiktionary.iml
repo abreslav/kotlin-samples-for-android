@@ -26,11 +26,11 @@
         <resOverlayFolders>
           <path>/res-overlay</path>
         </resOverlayFolders>
-        <includeSystemProguardFile>true</includeSystemProguardFile>
+        <includeSystemProguardFile>false</includeSystemProguardFile>
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />

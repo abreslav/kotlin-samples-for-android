@@ -23,7 +23,7 @@ public var mYTileCount : Int = 0
 private var mXOffset : Int = 0
 private var mYOffset : Int = 0
 
-public open class TileView(val context : Context, val attrs : AttributeSet, val defStyle : Int) : View(context, attrs, defStyle) {
+public open class TileView(val context : Context, val attrs : AttributeSet, val defStyle : Int = 0) : View(context, attrs, defStyle) {
 
     public open fun resetTiles(tilecount : Int) : Unit {
         mTileArray = Array<Bitmap?>(tilecount) { null }
