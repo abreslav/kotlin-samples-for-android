@@ -27,7 +27,7 @@ public val YELLOW_STAR : Int = 2
 public val GREEN_STAR : Int = 3
 
 public var mScore : Long = 0
-public var mMoveDelay : Long = 600
+public var mMoveDelay : Long = 300
 
 public var mLastMove : Long = 0
 

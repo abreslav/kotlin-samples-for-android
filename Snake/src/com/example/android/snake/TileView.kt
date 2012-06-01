@@ -51,7 +51,6 @@ public open class TileView(context: Context?, attrs: AttributeSet?): View(contex
             }
             mTileGrid.add(innerArray)
         }
-
         clearTiles()
     }
     public open fun loadTile(key: Int, tile: Drawable?): Unit {
@@ -82,13 +81,10 @@ public open class TileView(context: Context?, attrs: AttributeSet?): View(contex
             for (y in 0..mYTileCount) {
                 if (mTileGrid.get(x).get(y) > 0) {
                     val intValue = mTileGrid.get(x).get(y).intValue()
-                    println("intv " + intValue)
                     val bitmap = mTileArray.get(intValue)
                     if (bitmap == null) {
-                        println("return")
                         return
                     }
-                    println("draw")
                     canvas?.drawBitmap(bitmap,
                             (mXOffset + x * mTileSize).toFloat(),
                             (mYOffset + y * mTileSize).toFloat(),

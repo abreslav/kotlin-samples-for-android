@@ -13,6 +13,14 @@ import com.example.android.snake.SnakeView.Coordinate
 import java.util.ArrayList
 import java.util.Random
 import com.example.android.snake.static.*
+import android.view.MotionEvent
+import android.view.GestureDetector.OnGestureListener
+import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
+import android.hardware.SensorManager
+import android.hardware.SensorEventListener
+import android.hardware.SensorEvent
+import android.hardware.Sensor
 
 /**
 * User: Natalia.Ukhorskaya
@@ -20,36 +28,76 @@ import com.example.android.snake.static.*
 
 private val TAG = "SnakeView"
 
-public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : TileView(myContext, myAttrs) {
+public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileView(myContext, myAttrs), SensorEventListener  {
+    public override fun onSensorChanged(p0: SensorEvent?) {
+        println("----------------------------------------AAAAAAAAA")
+    }
+    public override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        print("2SKDFJHKSDJFH DKSJFH KSDJHF")
+    }
+
+    private var mSensorManager : SensorManager? = null
+    private var mAccelerometer : Sensor? = null
 
     {
         initSnakeView()
+        mSensorManager = myContext.getSystemService("sensor") as SensorManager?
+        mAccelerometer = mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
+
+
+
+
+    /*public class MyGestureDetector() : SimpleOnGestureListener() {
+        *//* public override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            println("EVENT_____________________________________________________________________________________")
+            if (Math.abs(e1?.getY().sure() - e2?.getY().sure()) > SWIPE_MAX_OFF_PATH)
+                return false;
+            // right to left swipe
+            if(e1?.getX().sure() - e2?.getX().sure() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                if (mDirection != EAST) {
+                    mNextDirection = WEST
+                }
+                return (true)
+            }  else if (e2?.getX().sure() - e1?.getX().sure() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                if (mDirection != WEST) {
+                    mNextDirection = EAST
+                }
+                return (true)
+            }
+            return super<GestureDetector.SimpleOnGestureListener>.onFling(e1, e2, velocityX, velocityY)
+        }*//*
+    }*/
 
     private val mRedrawHandler = RefreshHandler()
 
-    class Coordinate(val x : Int, val y : Int) {
 
-        public fun equals(val other : Coordinate) : Boolean {
+
+
+
+
+    class Coordinate(val x: Int, val y: Int) {
+
+        public fun equals(val other: Coordinate): Boolean {
             if (x == other.x && y == other.y) {
                 return true
             }
             return false
         }
 
-        public fun toString() : String {
+        public fun toString(): String {
             return "Coordinate: [" + x + "," + y + "]"
         }
     }
 
-    public class RefreshHandler() : Handler() {
+    public class RefreshHandler(): Handler() {
 
-        override fun handleMessage(val msg : Message?) {
+        override fun handleMessage(val msg: Message?) {
             this@SnakeView.update()
             this@SnakeView.invalidate()
         }
 
-        public fun sleep(val delayMillis : Long) {
+        public fun sleep(val delayMillis: Long) {
             sendMessageDelayed(obtainMessage(0), delayMillis)
         }
     }
@@ -83,22 +131,22 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
         addRandomApple()
         addRandomApple()
 
-        mMoveDelay = 600
+        mMoveDelay = 300
         mScore = 0
     }
 
-    private  fun coordArrayListToArray(val cvec : ArrayList<Coordinate>) : IntArray? {
+    private  fun coordArrayListToArray(val cvec: ArrayList<Coordinate>): IntArray? {
         var count = cvec.size() - 1
         val rawArray = IntArray(count * 2)
         for (var index in 0..count) {
-            val c : Coordinate = cvec.get(index)
+            val c: Coordinate = cvec.get(index)
             rawArray[2 * index] = c.x
             rawArray[2 * index + 1] = c.y
         }
         return rawArray
     }
 
-    public fun saveState() : Bundle {
+    public fun saveState(): Bundle {
         val map = Bundle()
 
         map.putIntArray("mAppleList", coordArrayListToArray(mAppleList))
@@ -111,7 +159,7 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
         return map
     }
 
-    private fun coordArrayToArrayList(val rawArray : IntArray) : ArrayList<Coordinate> {
+    private fun coordArrayToArrayList(val rawArray: IntArray): ArrayList<Coordinate> {
         val coordArrayList = ArrayList<Coordinate>()
 
         val coordCount = rawArray.size
@@ -123,7 +171,7 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
         return coordArrayList
     }
 
-    public fun restoreState(val icicle : Bundle) {
+    public fun restoreState(val icicle: Bundle) {
         setMode(PAUSE)
 
         mAppleList = coordArrayToArrayList(icicle.getIntArray("mAppleList").sure())
@@ -134,7 +182,64 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
         mSnakeTrail = coordArrayToArrayList(icicle.getIntArray("mSnakeTrail").sure())
     }
 
-    public override fun onKeyDown(val keyCode : Int, msg : KeyEvent?) : Boolean {
+    private final val SWIPE_MIN_DISTANCE = 120
+    private final val SWIPE_MAX_OFF_PATH = 250
+    private final val SWIPE_THRESHOLD_VELOCITY = 200
+
+
+    /*public override fun onTouchEvent(event: MotionEvent?): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super<TileView>.onTouchEvent(event)
+    }
+*/
+
+
+    /*public override fun onTouchEvent(event: MotionEvent?): Boolean {
+    when(event.sure().getAction()) {
+        MotionEvent.ACTION_UP -> {
+            if ((mMode == READY).or(mMode == LOSE)) {
+                initNewGame()
+                setMode(RUNNING)
+                update()
+                return (true)
+            }
+
+            if (mMode == PAUSE) {
+                setMode(RUNNING)
+                update()
+                return (true)
+            }
+
+            if (mDirection != SOUTH) {
+                mNextDirection = NORTH
+            }
+            return (true)
+        }
+        MotionEvent.ACTION_DOWN -> {
+            if (mDirection != NORTH) {
+                mNextDirection = SOUTH
+            }
+            return (true)
+        }
+    *//* MotionEvent.ACtion -> {
+            if (mDirection != EAST) {
+                mNextDirection = WEST
+            }
+            return (true)
+        }
+        KeyEvent.KEYCODE_DPAD_RIGHT -> {
+            if (mDirection != WEST) {
+                mNextDirection = EAST
+            }
+            return (true)
+        }*//*
+            else -> {
+            }
+        }
+        return super<TileView>.onTouchEvent(event)
+    }*/
+    public override fun onKeyDown(val keyCode: Int, msg: KeyEvent?): Boolean {
+
         when(keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
                 if ((mMode == READY).or(mMode == LOSE)) {
@@ -173,17 +278,18 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
                 }
                 return (true)
             }
-            else -> {}
+            else -> {
+            }
         }
 
-        return super.onKeyDown(keyCode, msg)
+        return super<TileView>.onKeyDown(keyCode, msg)
     }
 
-    public fun setTextView(val newView : TextView) {
+    public fun setTextView(val newView: TextView) {
         mStatusText = newView
     }
 
-    public fun setMode(val newMode : Int) {
+    public fun setMode(val newMode: Int) {
         val oldMode = mMode
         mMode = newMode
 
@@ -194,7 +300,7 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
         }
 
         val res = getContext()?.getResources().sure()
-        var str : CharSequence = ""
+        var str: CharSequence = ""
         when (newMode) {
             PAUSE -> {
                 str = res.getText(R.string.mode_pause).sure()
@@ -205,7 +311,8 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
             LOSE -> {
                 str = res.getString(R.string.mode_lose_prefix) + mScore + res.getString(R.string.mode_lose_suffix)
             }
-            else -> {}
+            else -> {
+            }
         }
 
         mStatusText?.setText(str)
@@ -213,8 +320,8 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
     }
 
     private fun addRandomApple() {
-        var newCoord : Coordinate? = null
-        var found : Boolean = false
+        var newCoord: Coordinate? = null
+        var found: Boolean = false
         while (!found) {
             // Choose a new location for our apple
             var newX = 1 + RNG.nextInt(mXTileCount - 2)
@@ -239,7 +346,7 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
 
     public fun update() {
         if (mMode == RUNNING) {
-            val  now : Long = System.currentTimeMillis()
+            val  now: Long = System.currentTimeMillis()
             if (now.minus(mLastMove) > mMoveDelay) {
                 clearTiles()
                 updateWalls()
@@ -252,7 +359,7 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
     }
 
     private fun updateWalls() {
-        for (var x in 0..mXTileCount) {
+        for (var x in 0..mXTileCount - 1) {
             setTile(GREEN_STAR, x, 0)
             setTile(GREEN_STAR, x, mYTileCount - 1)
         }
@@ -319,8 +426,9 @@ public class SnakeView(val myContext : Context, val myAttrs : AttributeSet) : Ti
                 addRandomApple()
 
                 mScore++
-                mMoveDelay *= 0.9
-                println(mMoveDelay)
+                if (mMoveDelay >= 50) {
+                    mMoveDelay -= 50
+                }
                 growSnake = true
             }
         }

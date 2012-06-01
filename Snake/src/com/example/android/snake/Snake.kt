@@ -14,6 +14,7 @@ import android.graphics.Canvas
 import android.R
 import com.example.android.snake.SnakeView
 import com.example.android.snake.static.*
+import android.view.GestureDetector
 
 /**
  * Snake: a simple game that everyone can enjoy.
@@ -25,13 +26,13 @@ import com.example.android.snake.static.*
  *
  */
 
-class Snake() : Activity() {
-    private var mSnakeView : SnakeView? = null;
-    private var ICICLE_KEY : String? = "snake-view"
+class Snake(): Activity() {
+    private var mSnakeView: SnakeView? = null;
+    private var ICICLE_KEY: String? = "snake-view"
 
-
-    protected override fun onCreate(savedInstanceState : Bundle?) {
+    protected override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
+
         setContentView(R.layout.snake_layout)
         mSnakeView = (findViewById(R.id.snake) as SnakeView?)
         mSnakeView?.setTextView((findViewById(R.id.text) as TextView))
@@ -39,7 +40,7 @@ class Snake() : Activity() {
             mSnakeView?.setMode(READY)
         }
         else {
-            var map : Bundle? = savedInstanceState.getBundle(ICICLE_KEY).sure()
+            var map: Bundle? = savedInstanceState.getBundle(ICICLE_KEY).sure()
             if (map != null)
             {
                 mSnakeView?.restoreState(map.sure())
@@ -49,12 +50,15 @@ class Snake() : Activity() {
                 mSnakeView?.setMode(PAUSE)
             }
         }
+
     }
-    protected override fun onPause() : Unit {
+
+
+    protected override fun onPause(): Unit {
         super<Activity>.onPause()
         mSnakeView?.setMode(PAUSE)
     }
-    public override fun onSaveInstanceState(outState : Bundle?) : Unit {
+    public override fun onSaveInstanceState(outState: Bundle?): Unit {
         outState?.putBundle(ICICLE_KEY, mSnakeView?.saveState())
     }
 }
