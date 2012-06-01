@@ -1,30 +1,26 @@
 package com.example.android.wiktionary
 
 import android.app.Activity
-import android.view.animation.Animation.AnimationListener
-import android.view.animation.Animation
-import android.view.View
-import android.widget.TextView
-import android.webkit.WebView
-import android.widget.ProgressBar
-import java.util.Stack
-import android.text.format.DateUtils
+import android.app.AlertDialog
+import android.app.SearchManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.view.animation.AnimationUtils
-import android.view.KeyEvent
 import android.os.SystemClock
 import android.text.TextUtils
-import android.os.AsyncTask
-import java.text.ParseException
-import android.content.Intent
-import android.app.SearchManager
-import com.example.android.wiktionary.ExtendedWikiHelperKt
-import java.util.Collections
+import android.text.format.DateUtils
+import android.view.KeyEvent
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.app.AlertDialog
-import test
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.Animation.AnimationListener
+import android.view.animation.AnimationUtils
+import android.webkit.WebView
+import android.widget.ProgressBar
+import android.widget.TextView
+import java.util.Stack
+import android.util.AttributeSet
 
 class LookupActivity() : Activity(), AnimationListener {
 
@@ -58,10 +54,11 @@ class LookupActivity() : Activity(), AnimationListener {
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
 
-        val byteArray = ByteArray(10)
-//        byteArray.take(5)
 
         setContentView(R.layout.lookup)
+
+//        TileView(this.getBaseContext().sure(), AttributeSet())
+
 
         // Load animations used to show/hide progress bar
         mSlideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in)

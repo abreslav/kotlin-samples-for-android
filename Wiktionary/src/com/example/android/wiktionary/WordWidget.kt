@@ -23,7 +23,7 @@ import java.util.regex.Pattern
  */
 class WordWidget(): AppWidgetProvider() {
     public override fun onUpdate(context : Context?, appWidgetManager : AppWidgetManager?, appWidgetIds : IntArray?) {
-        context?.startService(Intent(context, javaClass<UpdateService>))
+        context?.startService(Intent(context, javaClass<UpdateService>()))
     }
 }
 
@@ -33,7 +33,7 @@ class UpdateService() : Service() {
         val updateViews = buildUpdate(this)
 
         // Push update for this widget to the home screen
-        val thisWidget = ComponentName(this, javaClass<WordWidget>)
+        val thisWidget = ComponentName(this, javaClass<WordWidget>())
         val manager = AppWidgetManager.getInstance(this)
         manager?.updateAppWidget(thisWidget, updateViews)
     }
