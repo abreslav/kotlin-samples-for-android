@@ -12,6 +12,8 @@ import android.view.animation.Animation.AnimationListener
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.R
+import com.example.android.snake.SnakeView
+import com.example.android.snake.static.*
 
 /**
  * Snake: a simple game that everyone can enjoy.
@@ -33,12 +35,10 @@ class Snake() : Activity() {
         setContentView(R.layout.snake_layout)
         mSnakeView = (findViewById(R.id.snake) as SnakeView?)
         mSnakeView?.setTextView((findViewById(R.id.text) as TextView))
-        if (savedInstanceState == null)
-        {
+        if (savedInstanceState == null) {
             mSnakeView?.setMode(READY)
         }
-        else
-        {
+        else {
             var map : Bundle? = savedInstanceState.getBundle(ICICLE_KEY).sure()
             if (map != null)
             {

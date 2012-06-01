@@ -12,57 +12,87 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import java.util.ArrayList
 
-private var mTileArray : Array<Bitmap?>? = null
-private var mTileGrid : Array<IntArray?> = Array<IntArray?>(1){null}
-private val mPaint : Paint? = Paint()
+public var mTileArray: ArrayList<Bitmap?> = ArrayList<Bitmap?>()
+public var mTileGrid: ArrayList<ArrayList<Integer>> = ArrayList<ArrayList<Integer>>()
+public val mPaint: Paint = Paint()
 
-public var mTileSize : Int = 0
-public var mXTileCount : Int = 0
-public var mYTileCount : Int = 0
-private var mXOffset : Int = 0
-private var mYOffset : Int = 0
+public var mTileSize: Int = 1
+public var mXTileCount: Int = 0
+public var mYTileCount: Int = 0
+public var mXOffset: Int = 0
+public var mYOffset: Int = 0
 
-public open class TileView(val context : Context, val attrs : AttributeSet, val defStyle : Int = 0) : View(context, attrs, defStyle) {
-
-    public open fun resetTiles(tilecount : Int) : Unit {
-        mTileArray = Array<Bitmap?>(tilecount) { null }
-
+public open class TileView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
+    {
+        val a = context?.obtainStyledAttributes(attrs, R.styleable.TileView).sure()
+        mTileSize = a.getInt(R.styleable.TileView_tileSize, 12)
+        a.recycle()
     }
-    protected override fun onSizeChanged(w : Int, h : Int, oldw : Int, oldh : Int) : Unit {
-        mXTileCount = (Math.floor((w / mTileSize).toDouble()) as Int)
-        mYTileCount = (Math.floor((h / mTileSize).toDouble()) as Int)
+
+
+    public open fun resetTiles(tilecount: Int): Unit {
+        mTileArray = ArrayList<Bitmap?>()
+        for (i in 0..tilecount) {
+            mTileArray.add(null)
+        }
+    }
+
+    protected override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int): Unit {
+        mXTileCount = Math.floor((w / mTileSize).toDouble()).toInt()
+        mYTileCount = Math.floor((h / mTileSize).toDouble()).toInt()
         mXOffset = ((w - (mTileSize * mXTileCount)) / 2)
         mYOffset = ((h - (mTileSize * mYTileCount)) / 2)
-        mTileGrid = Array<IntArray?>(mXTileCount, {IntArray(mYTileCount)})
+        for (i in 0..mXTileCount) {
+            val innerArray = ArrayList<Integer>()
+            for (j in 0..mYTileCount) {
+                innerArray.add(Integer(0))
+            }
+            mTileGrid.add(innerArray)
+        }
+
         clearTiles()
     }
-    public open fun loadTile(key : Int, tile : Drawable?) : Unit {
-        var bitmap : Bitmap? = Bitmap.createBitmap(mTileSize, mTileSize, Bitmap.Config.ARGB_8888)
-        var canvas : Canvas? = Canvas(bitmap)
+    public open fun loadTile(key: Int, tile: Drawable?): Unit {
+        var bitmap: Bitmap? = Bitmap.createBitmap(mTileSize, mTileSize, Bitmap.Config.ARGB_8888)
+        var canvas: Canvas? = Canvas(bitmap)
         tile?.setBounds(0, 0, mTileSize, mTileSize)
         tile?.draw(canvas)
-        mTileArray?.set(key, bitmap)
+        mTileArray.set(key, bitmap)
     }
-    public open fun clearTiles() : Unit {
-        for (x in 0..mXTileCount - 1) {
-            for (y in 0..mYTileCount - 1) {
+    public open fun clearTiles(): Unit {
+        for (x in 0..mXTileCount ) {
+            for (y in 0..mYTileCount) {
                 setTile(0, x, y)
             }
         }
     }
-    public open fun setTile(tileindex : Int, x : Int, y : Int) : Unit {
-        mTileGrid[x]?.set(y, tileindex)
+    public open fun setTile(tileindex: Int, x: Int, y: Int): Unit {
+        if (mTileGrid.size() > x && mTileGrid.get(x).size() > y) {
+            //todo array size
+            mTileGrid.get(x).set(y, Integer(tileindex))
+        } else {
+            println("INDEX OUT OF BOUND " + x + " " + y + " " + tileindex)
+        }
     }
-    public override fun onDraw(canvas : Canvas?) : Unit {
-        super<View>.onDraw(canvas);
+    public override fun onDraw(canvas: Canvas?): Unit {
+        super<View>.onDraw(canvas)
         for (x in 0..mXTileCount) {
             for (y in 0..mYTileCount) {
-                if (mTileGrid.get(x)?.get(y)?.compareTo(0) == 0) {
-                    canvas?.drawBitmap(mTileArray?.get(mTileGrid.get(x)?.get(y).sure()).sure(),
+                if (mTileGrid.get(x).get(y) > 0) {
+                    val intValue = mTileGrid.get(x).get(y).intValue()
+                    println("intv " + intValue)
+                    val bitmap = mTileArray.get(intValue)
+                    if (bitmap == null) {
+                        println("return")
+                        return
+                    }
+                    println("draw")
+                    canvas?.drawBitmap(bitmap,
                             (mXOffset + x * mTileSize).toFloat(),
                             (mYOffset + y * mTileSize).toFloat(),
-                            mPaint);
+                            mPaint)
                 }
             }
         }
