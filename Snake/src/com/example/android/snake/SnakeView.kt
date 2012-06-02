@@ -28,53 +28,16 @@ import android.hardware.Sensor
 
 private val TAG = "SnakeView"
 
-public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileView(myContext, myAttrs), SensorEventListener  {
-    public override fun onSensorChanged(p0: SensorEvent?) {
-        println("----------------------------------------AAAAAAAAA")
-    }
-    public override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        print("2SKDFJHKSDJFH DKSJFH KSDJHF")
-    }
+public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileView(myContext, myAttrs)  {
 
-    private var mSensorManager : SensorManager? = null
-    private var mAccelerometer : Sensor? = null
+    private var mSensorManager: SensorManager? = null
+    private var mAccelerometer: Sensor? = null
 
     {
         initSnakeView()
-        mSensorManager = myContext.getSystemService("sensor") as SensorManager?
-        mAccelerometer = mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
-
-
-
-    /*public class MyGestureDetector() : SimpleOnGestureListener() {
-        *//* public override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-            println("EVENT_____________________________________________________________________________________")
-            if (Math.abs(e1?.getY().sure() - e2?.getY().sure()) > SWIPE_MAX_OFF_PATH)
-                return false;
-            // right to left swipe
-            if(e1?.getX().sure() - e2?.getX().sure() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                if (mDirection != EAST) {
-                    mNextDirection = WEST
-                }
-                return (true)
-            }  else if (e2?.getX().sure() - e1?.getX().sure() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                if (mDirection != WEST) {
-                    mNextDirection = EAST
-                }
-                return (true)
-            }
-            return super<GestureDetector.SimpleOnGestureListener>.onFling(e1, e2, velocityX, velocityY)
-        }*//*
-    }*/
-
     private val mRedrawHandler = RefreshHandler()
-
-
-
-
-
 
     class Coordinate(val x: Int, val y: Int) {
 
@@ -102,7 +65,6 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         }
     }
 
-
     private fun initSnakeView() {
         setFocusable(true)
 
@@ -114,7 +76,6 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar))
 
     }
-
 
     private fun initNewGame() {
         mSnakeTrail.clear()
@@ -186,96 +147,23 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
     private final val SWIPE_MAX_OFF_PATH = 250
     private final val SWIPE_THRESHOLD_VELOCITY = 200
 
-
-    /*public override fun onTouchEvent(event: MotionEvent?): Boolean {
-        gestureDetector.onTouchEvent(event)
-        return super<TileView>.onTouchEvent(event)
-    }
-*/
-
-
-    /*public override fun onTouchEvent(event: MotionEvent?): Boolean {
-    when(event.sure().getAction()) {
-        MotionEvent.ACTION_UP -> {
-            if ((mMode == READY).or(mMode == LOSE)) {
-                initNewGame()
-                setMode(RUNNING)
-                update()
-                return (true)
-            }
-
-            if (mMode == PAUSE) {
-                setMode(RUNNING)
-                update()
-                return (true)
-            }
-
-            if (mDirection != SOUTH) {
-                mNextDirection = NORTH
-            }
-            return (true)
-        }
-        MotionEvent.ACTION_DOWN -> {
-            if (mDirection != NORTH) {
-                mNextDirection = SOUTH
-            }
-            return (true)
-        }
-    *//* MotionEvent.ACtion -> {
-            if (mDirection != EAST) {
-                mNextDirection = WEST
-            }
-            return (true)
-        }
-        KeyEvent.KEYCODE_DPAD_RIGHT -> {
-            if (mDirection != WEST) {
-                mNextDirection = EAST
-            }
-            return (true)
-        }*//*
-            else -> {
-            }
-        }
-        return super<TileView>.onTouchEvent(event)
-    }*/
     public override fun onKeyDown(val keyCode: Int, msg: KeyEvent?): Boolean {
 
         when(keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
-                if ((mMode == READY).or(mMode == LOSE)) {
-                    initNewGame()
-                    setMode(RUNNING)
-                    update()
-                    return (true)
-                }
-
-                if (mMode == PAUSE) {
-                    setMode(RUNNING)
-                    update()
-                    return (true)
-                }
-
-                if (mDirection != SOUTH) {
-                    mNextDirection = NORTH
-                }
+                setDirection("UP")
                 return (true)
             }
             KeyEvent.KEYCODE_DPAD_DOWN -> {
-                if (mDirection != NORTH) {
-                    mNextDirection = SOUTH
-                }
+                setDirection("DOWN")
                 return (true)
             }
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                if (mDirection != EAST) {
-                    mNextDirection = WEST
-                }
+                setDirection("LEFT")
                 return (true)
             }
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                if (mDirection != WEST) {
-                    mNextDirection = EAST
-                }
+                setDirection("RIGHT")
                 return (true)
             }
             else -> {
@@ -287,6 +175,45 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
 
     public fun setTextView(val newView: TextView) {
         mStatusText = newView
+    }
+
+    public fun setDirection(val direction: String) {
+        when (direction) {
+            "UP" -> {
+                if ((mMode == READY).or(mMode == LOSE)) {
+                    initNewGame()
+                    setMode(RUNNING)
+                    update()
+                }
+
+                if (mMode == PAUSE) {
+                    setMode(RUNNING)
+                    update()
+                }
+
+                if (mDirection != SOUTH) {
+                    mNextDirection = NORTH
+                }
+            }
+            "DOWN" -> {
+                if (mDirection != NORTH) {
+                    mNextDirection = SOUTH
+                }
+            }
+            "LEFT" -> {
+                if (mDirection != EAST) {
+                    mNextDirection = WEST
+                }
+            }
+            "RIGHT" -> {
+                if (mDirection != WEST) {
+                    mNextDirection = EAST
+                }
+            }
+            else -> {
+                Log.e("error", "Incorrect direction")
+            }
+        }
     }
 
     public fun setMode(val newMode: Int) {
@@ -426,8 +353,8 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
                 addRandomApple()
 
                 mScore++
-                if (mMoveDelay >= 50) {
-                    mMoveDelay -= 50
+                if (mMoveDelay >= 20) {
+                    mMoveDelay -= 20
                 }
                 growSnake = true
             }
