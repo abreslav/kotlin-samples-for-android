@@ -1,34 +1,16 @@
 package com.example.android.snake
 
+import android.app.Activity
+import android.content.Context
+import android.os.Bundle
+import android.os.Vibrator
+import android.view.MotionEvent
+import android.widget.TextView
+import com.example.android.snake.static.*
+
 /**
 * User: Natalia.Ukhorskaya
 */
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import android.view.animation.Animation.AnimationListener
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.R
-import com.example.android.snake.SnakeView
-import com.example.android.snake.static.*
-import android.view.GestureDetector
-import android.hardware.SensorEventListener
-import android.hardware.SensorEvent
-import android.hardware.Sensor
-import android.hardware.SensorManager
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
-import android.view.MotionEvent
-import android.gesture.GestureOverlayView.OnGestureListener
-import android.gesture.GestureOverlayView
-import android.view.GestureDetector.SimpleOnGestureListener
-import android.graphics.Point
-import android.os.Vibrator
-
 /**
  * Snake: a simple game that everyone can enjoy.
  *
@@ -40,49 +22,51 @@ import android.os.Vibrator
  */
 
 class Snake(): Activity() {
-    var mSensorManager: SensorManager? = null
-    var mAccelerometerSensor: Sensor? = null
+    private val mScreenWidth: Int
+        get() {
+            return getWindowManager()?.getDefaultDisplay()?.getWidth().sure()
+        }
 
-    var mScreenWidth = 0
-    var mScreenHeight = 0
+    private val mScreenHeight: Int
+        get() {
+            return getWindowManager()?.getDefaultDisplay()?.getHeight().sure()
+        }
 
-    protected override fun onResume() {
-        super<Activity>.onResume()
-    }
+    private val mSnakeView: SnakeView
+        get() {
+            return findViewById(R.id.snake) as SnakeView
+        }
 
-    private var mSnakeView: SnakeView? = null;
-    private var ICICLE_KEY: String? = "snake-view"
+
+    private var ICICLE_KEY: String = "snake-view"
 
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
 
         setContentView(R.layout.snake_layout)
-        mSnakeView = (findViewById(R.id.snake) as SnakeView?)
-        mSnakeView?.setTextView((findViewById(R.id.text) as TextView))
+        mSnakeView.setTextView((findViewById(R.id.text) as TextView))
         if (savedInstanceState == null) {
-            mSnakeView?.setMode(READY)
+            mSnakeView.setMode(READY)
         }
         else {
-            var map: Bundle? = savedInstanceState.getBundle(ICICLE_KEY).sure()
-            if (map != null)
-            {
-                mSnakeView?.restoreState(map.sure())
+            var map: Bundle? = savedInstanceState.getBundle(ICICLE_KEY)
+            if (map != null) {
+                mSnakeView.restoreState(map.sure())
             }
-            else
-            {
-                mSnakeView?.setMode(PAUSE)
+            else {
+                mSnakeView.setMode(PAUSE)
             }
-
         }
+    }
 
-        val display = getWindowManager()?.getDefaultDisplay()
-        mScreenHeight = display?.getHeight().sure()
-        mScreenWidth = display?.getWidth().sure()
+    protected override fun onResume() {
+        super<Activity>.onResume()
+        mSnakeView.setMode(READY)
     }
 
     protected override fun onPause(): Unit {
         super<Activity>.onPause()
-        mSnakeView?.setMode(PAUSE)
+        mSnakeView.setMode(PAUSE)
     }
 
     public override fun onSaveInstanceState(outState: Bundle?): Unit {
@@ -113,5 +97,6 @@ class Snake(): Activity() {
         }
         return super<Activity>.onTouchEvent(event)
     }
+
 }
 

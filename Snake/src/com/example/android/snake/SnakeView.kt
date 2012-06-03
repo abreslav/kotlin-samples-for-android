@@ -10,17 +10,8 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
 import com.example.android.snake.SnakeView.Coordinate
-import java.util.ArrayList
-import java.util.Random
 import com.example.android.snake.static.*
-import android.view.MotionEvent
-import android.view.GestureDetector.OnGestureListener
-import android.view.GestureDetector
-import android.view.GestureDetector.SimpleOnGestureListener
-import android.hardware.SensorManager
-import android.hardware.SensorEventListener
-import android.hardware.SensorEvent
-import android.hardware.Sensor
+import java.util.ArrayList
 
 /**
 * User: Natalia.Ukhorskaya
@@ -29,9 +20,6 @@ import android.hardware.Sensor
 private val TAG = "SnakeView"
 
 public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileView(myContext, myAttrs)  {
-
-    private var mSensorManager: SensorManager? = null
-    private var mAccelerometer: Sensor? = null
 
     {
         initSnakeView()
@@ -330,7 +318,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         }
 
         if ((newHead.x < 1) || (newHead.y < 1) || (newHead.x > mXTileCount - 2)
-        || (newHead.y > mYTileCount - 2)) {
+                            || (newHead.y > mYTileCount - 2)) {
             setMode(LOSE)
             return
         }

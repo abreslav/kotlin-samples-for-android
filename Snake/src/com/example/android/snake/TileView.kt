@@ -24,7 +24,8 @@ public var mYTileCount: Int = 0
 public var mXOffset: Int = 0
 public var mYOffset: Int = 0
 
-public open class TileView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
+open class TileView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
+
     {
         val a = context?.obtainStyledAttributes(attrs, R.styleable.TileView).sure()
         mTileSize = a.getInt(R.styleable.TileView_tileSize, 12)
@@ -53,6 +54,7 @@ public open class TileView(context: Context?, attrs: AttributeSet?): View(contex
         }
         clearTiles()
     }
+
     public open fun loadTile(key: Int, tile: Drawable?): Unit {
         var bitmap: Bitmap? = Bitmap.createBitmap(mTileSize, mTileSize, Bitmap.Config.ARGB_8888)
         var canvas: Canvas? = Canvas(bitmap)
@@ -60,6 +62,7 @@ public open class TileView(context: Context?, attrs: AttributeSet?): View(contex
         tile?.draw(canvas)
         mTileArray.set(key, bitmap)
     }
+
     public open fun clearTiles(): Unit {
         for (x in 0..mXTileCount ) {
             for (y in 0..mYTileCount) {
