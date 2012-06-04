@@ -14,23 +14,26 @@ import android.util.AttributeSet
 import android.view.View
 import java.util.ArrayList
 
-public var mTileArray: ArrayList<Bitmap?> = ArrayList<Bitmap?>()
-public var mTileGrid: ArrayList<ArrayList<Integer>> = ArrayList<ArrayList<Integer>>()
-public val mPaint: Paint = Paint()
 
-public var mTileSize: Int = 1
-public var mXTileCount: Int = 0
-public var mYTileCount: Int = 0
-public var mXOffset: Int = 0
-public var mYOffset: Int = 0
+open class TileView(context: Context, attrs: AttributeSet): View(context, attrs) {
 
-open class TileView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
+    private var mTileSize: Int = 1
 
     {
-        val a = context?.obtainStyledAttributes(attrs, R.styleable.TileView).sure()
+        val a = context.obtainStyledAttributes(attrs, R.styleable.TileView).sure()
         mTileSize = a.getInt(R.styleable.TileView_tileSize, 12)
         a.recycle()
     }
+
+
+    private var mTileArray: ArrayList<Bitmap?> = ArrayList<Bitmap?>()
+    private var mTileGrid: ArrayList<ArrayList<Integer>> = ArrayList<ArrayList<Integer>>()
+    private val mPaint: Paint = Paint()
+
+    var mXTileCount: Int = 0
+    var mYTileCount: Int = 0
+    private var mXOffset: Int = 0
+    private var mYOffset: Int = 0
 
 
     public open fun resetTiles(tilecount: Int): Unit {
@@ -55,11 +58,11 @@ open class TileView(context: Context?, attrs: AttributeSet?): View(context, attr
         clearTiles()
     }
 
-    public open fun loadTile(key: Int, tile: Drawable?): Unit {
+    public open fun loadTile(key: Int, tile: Drawable): Unit {
         var bitmap: Bitmap? = Bitmap.createBitmap(mTileSize, mTileSize, Bitmap.Config.ARGB_8888)
         var canvas: Canvas? = Canvas(bitmap)
-        tile?.setBounds(0, 0, mTileSize, mTileSize)
-        tile?.draw(canvas)
+        tile.setBounds(0, 0, mTileSize, mTileSize)
+        tile.draw(canvas)
         mTileArray.set(key, bitmap)
     }
 
@@ -72,7 +75,6 @@ open class TileView(context: Context?, attrs: AttributeSet?): View(context, attr
     }
     public open fun setTile(tileindex: Int, x: Int, y: Int): Unit {
         if (mTileGrid.size() > x && mTileGrid.get(x).size() > y) {
-            //todo array size
             mTileGrid.get(x).set(y, Integer(tileindex))
         } else {
             println("INDEX OUT OF BOUND " + x + " " + y + " " + tileindex)

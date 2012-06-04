@@ -70,25 +70,26 @@ class Snake(): Activity() {
     }
 
     public override fun onSaveInstanceState(outState: Bundle?): Unit {
-        outState?.putBundle(ICICLE_KEY, mSnakeView?.saveState())
+        outState?.putBundle(ICICLE_KEY, mSnakeView.saveState())
     }
 
 
     public override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.getAction() == MotionEvent.ACTION_DOWN) {
+            mSnakeView.maybeStart()
             val x = event?.getX().sure()
             val y = event?.getY().sure()
             if (mNextDirection == NORTH || mNextDirection == SOUTH) {
                 if (x > mScreenWidth / 2) {
-                    mSnakeView?.setDirection("RIGHT")
+                    mSnakeView.setDirection("RIGHT")
                 } else  {
-                    mSnakeView?.setDirection("LEFT")
+                    mSnakeView.setDirection("LEFT")
                 }
             } else if (mNextDirection == EAST || mNextDirection == WEST) {
                 if (y > mScreenHeight / 2) {
-                    mSnakeView?.setDirection("DOWN")
+                    mSnakeView.setDirection("DOWN")
                 } else  {
-                    mSnakeView?.setDirection("UP")
+                    mSnakeView.setDirection("UP")
                 }
             }
 

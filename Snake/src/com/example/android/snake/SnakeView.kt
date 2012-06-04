@@ -17,8 +17,6 @@ import java.util.ArrayList
 * User: Natalia.Ukhorskaya
 */
 
-private val TAG = "SnakeView"
-
 public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileView(myContext, myAttrs)  {
 
     {
@@ -26,32 +24,9 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
     }
 
     private val mRedrawHandler = RefreshHandler()
-
-    class Coordinate(val x: Int, val y: Int) {
-
-        public fun equals(val other: Coordinate): Boolean {
-            if (x == other.x && y == other.y) {
-                return true
-            }
-            return false
-        }
-
-        public fun toString(): String {
-            return "Coordinate: [" + x + "," + y + "]"
-        }
-    }
-
-    public class RefreshHandler(): Handler() {
-
-        override fun handleMessage(val msg: Message?) {
-            this@SnakeView.update()
-            this@SnakeView.invalidate()
-        }
-
-        public fun sleep(val delayMillis: Long) {
-            sendMessageDelayed(obtainMessage(0), delayMillis)
-        }
-    }
+    private val SWIPE_MIN_DISTANCE = 120
+    private val SWIPE_MAX_OFF_PATH = 250
+    private val SWIPE_THRESHOLD_VELOCITY = 200
 
     private fun initSnakeView() {
         setFocusable(true)
@@ -59,9 +34,9 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         val r = this.getContext()?.getResources().sure()
 
         resetTiles(4)
-        loadTile(RED_STAR, r.getDrawable(R.drawable.redstar))
-        loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar))
-        loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar))
+        loadTile(RED_STAR, r.getDrawable(R.drawable.redstar).sure())
+        loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar).sure())
+        loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar).sure())
 
     }
 
@@ -84,15 +59,15 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         mScore = 0
     }
 
-    private  fun coordArrayListToArray(val cvec: ArrayList<Coordinate>): IntArray? {
-        var count = cvec.size() - 1
-        val rawArray = IntArray(count * 2)
+    private fun coordArrayListToArray(val coordinatesArrayList: ArrayList<Coordinate>): IntArray? {
+        var count = coordinatesArrayList.size() - 1
+        val coordinatesArray = IntArray(count * 2)
         for (var index in 0..count) {
-            val c: Coordinate = cvec.get(index)
-            rawArray[2 * index] = c.x
-            rawArray[2 * index + 1] = c.y
+            val c: Coordinate = coordinatesArrayList.get(index)
+            coordinatesArray[2 * index] = c.x
+            coordinatesArray[2 * index + 1] = c.y
         }
-        return rawArray
+        return coordinatesArray
     }
 
     public fun saveState(): Bundle {
@@ -108,16 +83,16 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         return map
     }
 
-    private fun coordArrayToArrayList(val rawArray: IntArray): ArrayList<Coordinate> {
-        val coordArrayList = ArrayList<Coordinate>()
+    private fun coordArrayToArrayList(val coordinatesArray: IntArray): ArrayList<Coordinate> {
+        val coordinatesArrayList = ArrayList<Coordinate>()
 
-        val coordCount = rawArray.size
-        for (var index in 0..coordCount) {
-            val  c = Coordinate(rawArray[index].sure(), rawArray[index + 1].sure())
-            coordArrayList.add(c)
+        val count = coordinatesArray.size
+        for (var index in 0..count) {
+            val  c = Coordinate(coordinatesArray[index].sure(), coordinatesArray[index + 1].sure())
+            coordinatesArrayList.add(c)
             index += 2
         }
-        return coordArrayList
+        return coordinatesArrayList
     }
 
     public fun restoreState(val icicle: Bundle) {
@@ -130,10 +105,6 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         mScore = icicle.getLong("mScore")
         mSnakeTrail = coordArrayToArrayList(icicle.getIntArray("mSnakeTrail").sure())
     }
-
-    private final val SWIPE_MIN_DISTANCE = 120
-    private final val SWIPE_MAX_OFF_PATH = 250
-    private final val SWIPE_THRESHOLD_VELOCITY = 200
 
     public override fun onKeyDown(val keyCode: Int, msg: KeyEvent?): Boolean {
 
@@ -168,17 +139,6 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
     public fun setDirection(val direction: String) {
         when (direction) {
             "UP" -> {
-                if ((mMode == READY).or(mMode == LOSE)) {
-                    initNewGame()
-                    setMode(RUNNING)
-                    update()
-                }
-
-                if (mMode == PAUSE) {
-                    setMode(RUNNING)
-                    update()
-                }
-
                 if (mDirection != SOUTH) {
                     mNextDirection = NORTH
                 }
@@ -201,6 +161,19 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
             else -> {
                 Log.e("error", "Incorrect direction")
             }
+        }
+    }
+
+    public fun maybeStart() {
+        if ((mMode == READY).or(mMode == LOSE)) {
+            initNewGame()
+            setMode(RUNNING)
+            update()
+        }
+
+        if (mMode == PAUSE) {
+            setMode(RUNNING)
+            update()
         }
     }
 
@@ -254,7 +227,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
             found = !collision
         }
         if (newCoord == null) {
-            Log.e(TAG, "Somehow ended up with a null newCoord!")
+            Log.e("SnakeView", "Somehow ended up with a null newCoord!")
         }
         mAppleList.add(newCoord.sure())
     }
@@ -365,6 +338,32 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
             index++
         }
 
+    }
+
+    class Coordinate(val x: Int, val y: Int) {
+
+        public fun equals(val other: Coordinate): Boolean {
+            if (x == other.x && y == other.y) {
+                return true
+            }
+            return false
+        }
+
+        public fun toString(): String {
+            return "Coordinate: [" + x + "," + y + "]"
+        }
+    }
+
+    public class RefreshHandler(): Handler() {
+
+        override fun handleMessage(val msg: Message?) {
+            this@SnakeView.update()
+            this@SnakeView.invalidate()
+        }
+
+        public fun sleep(val delayMillis: Long) {
+            sendMessageDelayed(obtainMessage(0), delayMillis)
+        }
     }
 
 }
