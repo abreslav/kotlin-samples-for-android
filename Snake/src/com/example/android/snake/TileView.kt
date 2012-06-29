@@ -26,7 +26,7 @@ open class TileView(context: Context, attrs: AttributeSet): View(context, attrs)
     }
 
 
-    private var mTileArray: ArrayList<Bitmap?> = ArrayList<Bitmap?>()
+    private var mTileArray: Array<Bitmap?> = Array<Bitmap?>(0) {null}
     private var mTileGrid: ArrayList<ArrayList<Integer>> = ArrayList<ArrayList<Integer>>()
     private val mPaint: Paint = Paint()
 
@@ -37,10 +37,10 @@ open class TileView(context: Context, attrs: AttributeSet): View(context, attrs)
 
 
     public open fun resetTiles(tilecount: Int): Unit {
-        mTileArray = ArrayList<Bitmap?>()
-        for (i in 0..tilecount) {
-            mTileArray.add(null)
-        }
+        mTileArray = Array<Bitmap?>(tilecount) { null }
+//        for (i in 0..tilecount) {
+//            mTileArray.add(null)
+//        }
     }
 
     protected override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int): Unit {

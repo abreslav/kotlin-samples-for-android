@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.example.android.snake.SnakeView.Coordinate
 import com.example.android.snake.static.*
 import java.util.ArrayList
+import android.graphics.drawable.Drawable
 
 /**
 * User: Natalia.Ukhorskaya
@@ -28,7 +29,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
     private val SWIPE_MAX_OFF_PATH = 250
     private val SWIPE_THRESHOLD_VELOCITY = 200
 
-    private fun initSnakeView() {
+    fun initSnakeView() {
         setFocusable(true)
 
         val r = this.getContext()?.getResources().sure()
@@ -40,7 +41,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
 
     }
 
-    private fun initNewGame() {
+    fun initNewGame() {
         mSnakeTrail.clear()
         mAppleList.clear()
 
@@ -59,7 +60,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         mScore = 0
     }
 
-    private fun coordArrayListToArray(val coordinatesArrayList: ArrayList<Coordinate>): IntArray? {
+    fun coordArrayListToArray(val coordinatesArrayList: ArrayList<Coordinate>): IntArray? {
         var count = coordinatesArrayList.size() - 1
         val coordinatesArray = IntArray(count * 2)
         for (var index in 0..count) {
@@ -83,7 +84,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         return map
     }
 
-    private fun coordArrayToArrayList(val coordinatesArray: IntArray): ArrayList<Coordinate> {
+    fun coordArrayToArrayList(val coordinatesArray: IntArray): ArrayList<Coordinate> {
         val coordinatesArrayList = ArrayList<Coordinate>()
 
         val count = coordinatesArray.size
@@ -142,26 +143,35 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
                 if (mDirection != SOUTH) {
                     mNextDirection = NORTH
                 }
+                setBackgroundImage(R.drawable.back_lr)
             }
             "DOWN" -> {
                 if (mDirection != NORTH) {
                     mNextDirection = SOUTH
                 }
+                setBackgroundImage(R.drawable.back_lr)
             }
             "LEFT" -> {
                 if (mDirection != EAST) {
                     mNextDirection = WEST
                 }
+                setBackgroundImage(R.drawable.back)
             }
             "RIGHT" -> {
                 if (mDirection != WEST) {
                     mNextDirection = EAST
                 }
+                setBackgroundImage(R.drawable.back)
             }
             else -> {
                 Log.e("error", "Incorrect direction")
             }
         }
+    }
+
+    fun setBackgroundImage(val draw: Int) {
+        val resources = myContext.getResources()
+        this.setBackgroundDrawable(resources?.getDrawable(draw))
     }
 
     public fun maybeStart() {
@@ -207,7 +217,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         mStatusText?.setVisibility(View.VISIBLE)
     }
 
-    private fun addRandomApple() {
+    fun addRandomApple() {
         var newCoord: Coordinate? = null
         var found: Boolean = false
         while (!found) {
@@ -246,7 +256,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         }
     }
 
-    private fun updateWalls() {
+    fun updateWalls() {
         for (var x in 0..mXTileCount - 1) {
             setTile(GREEN_STAR, x, 0)
             setTile(GREEN_STAR, x, mYTileCount - 1)
@@ -257,13 +267,13 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         }
     }
 
-    private fun updateApples() {
+    fun updateApples() {
         for (c in mAppleList) {
             setTile(YELLOW_STAR, c.x, c.y)
         }
     }
 
-    private fun updateSnake() {
+    fun updateSnake() {
         var growSnake = false
 
         // grab the snake by the head

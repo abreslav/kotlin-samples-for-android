@@ -7,6 +7,8 @@ import android.os.Vibrator
 import android.view.MotionEvent
 import android.widget.TextView
 import com.example.android.snake.static.*
+import com.example.android.snake.R.drawable
+import android.graphics.drawable.Drawable
 
 /**
 * User: Natalia.Ukhorskaya
@@ -22,17 +24,17 @@ import com.example.android.snake.static.*
  */
 
 class Snake(): Activity() {
-    private val mScreenWidth: Int
+    val mScreenWidth: Int
         get() {
             return getWindowManager()?.getDefaultDisplay()?.getWidth().sure()
         }
 
-    private val mScreenHeight: Int
+    val mScreenHeight: Int
         get() {
             return getWindowManager()?.getDefaultDisplay()?.getHeight().sure()
         }
 
-    private val mSnakeView: SnakeView
+    val mSnakeView: SnakeView
         get() {
             return findViewById(R.id.snake) as SnakeView
         }
