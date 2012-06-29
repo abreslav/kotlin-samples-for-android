@@ -54,26 +54,27 @@ class UpdateService() : Service() {
         // Build the page title for today, such as "March 21"
         val pageName = res?.getString(R.string.template_wotd_title,
                 monthNames?.get(today.month), today.monthDay)
-        var pageContent: String? = null
+        val pageContent: String
 
         try {
             // Try querying the Wiktionary API for today's word
             SimpleWikiHelper.instance.prepareUserAgent(context)
-            pageContent = SimpleWikiHelper.instance.getPageContent(pageName.sure(), false)
+            pageContent = SimpleWikiHelper.instance.getPageContent(pageName ?: "", false) ?: ""
         } catch (e: IllegalArgumentException) {
             Log.e("WordWidget", "Couldn't contact API", e)
+            throw RuntimeException(e)
         }
 
-        var views: RemoteViews?
-        val matcher = Pattern.compile("(?s)\\{\\{wotd\\|(.+?)\\|(.+?)\\|([^#\\|]+).*?\\}\\}")?.matcher(pageContent).sure()
-        if (matcher.find().sure()) {
+        val views: RemoteViews
+        val matcher = Pattern.compile("(?s)\\{\\{wotd\\|(.+?)\\|(.+?)\\|([^#\\|]+).*?\\}\\}")?.matcher(pageContent)!!
+        if (matcher.find()) {
             // Build an update that holds the updated widget contents
             views = RemoteViews(context.getPackageName(), R.layout.widget_word)
 
             val wordTitle = matcher.group(1)
-            views?.setTextViewText(R.id.word_title, wordTitle)
-            views?.setTextViewText(R.id.word_type, matcher.group(2))
-            views?.setTextViewText(R.id.definition, matcher.group(3)?.trim())
+            views.setTextViewText(R.id.word_title, wordTitle)
+            views.setTextViewText(R.id.word_type, matcher.group(2))
+            views.setTextViewText(R.id.definition, matcher.group(3)?.trim())
 
             // When user clicks on widget, launch to Wiktionary definition page
             val definePage = String.format("%s://%s/%s", WIKI_AUTHORITY,
@@ -81,13 +82,13 @@ class UpdateService() : Service() {
             val defineIntent = Intent(Intent.ACTION_VIEW, Uri.parse(definePage))
             val pendingIntent = PendingIntent.getActivity(context,
                     0 /* no requestCode */, defineIntent, 0 /* no flags */)
-            views?.setOnClickPendingIntent(R.id.widget, pendingIntent)
+            views.setOnClickPendingIntent(R.id.widget, pendingIntent)
 
         } else {
             // Didn't find word of day, so show error message
             views = RemoteViews(context.getPackageName(), R.layout.widget_message)
-            views?.setTextViewText(R.id.message, context.getString(R.string.widget_error))
+            views.setTextViewText(R.id.message, context.getString(R.string.widget_error))
         }
-        return views.sure()
+        return views
     }
 }

@@ -42,14 +42,14 @@ val STYLE_SHEET = "<style>h2 {font-size:1.2em;font-weight:normal;} " +
 * extra sections that can clutter things up on a mobile screen.
 */
 val sValidSections =
-Pattern.compile("(verb|noun|adjective|pronoun|interjection)", Pattern.CASE_INSENSITIVE);
+        Pattern.compile("(verb|noun|adjective|pronoun|interjection)", Pattern.CASE_INSENSITIVE);
 
 /**
 * Pattern that can be used to split a returned wiki page into its various
 * sections. Doesn't treat children sections differently.
 */
 val sSectionSplit =
-Pattern.compile("^=+(.+?)=+.+?(?=^=)", (Pattern.MULTILINE.xor(Pattern.DOTALL)));
+        Pattern.compile("^=+(.+?)=+.+?(?=^=)", (Pattern.MULTILINE.xor(Pattern.DOTALL)));
 //        Pattern.compile("^=+(.+?)=+.+?(?=^=)", Pattern.MULTILINE | Pattern.DOTALL);
 
 /**
@@ -83,7 +83,7 @@ val ENCODING = "utf-8";
 * {@link Uri} to use when requesting a random page.
 */
 val WIKTIONARY_RANDOM =
-"http://en.wiktionary.org/w/api.php?action=query&list=random&format=json";
+        "http://en.wiktionary.org/w/api.php?action=query&list=random&format=json";
 
 /**
 * Fake section to insert at the bottom of a wiki response before parsing.
@@ -99,9 +99,9 @@ val STUB_SECTION = "\n=Stub section=";
 */
 val RANDOM_TRIES = 3;
 
-val sFormatRules : ArrayList<FormatRule> = init()
+val sFormatRules: ArrayList<FormatRule> = init()
 
-fun init() : ArrayList<FormatRule> {
+fun init(): ArrayList<FormatRule> {
     // Format header blocks and wrap outside content in ordered list
     val result = ArrayList<FormatRule>()
     result.add(FormatRule("^=+(.+?)=+", "</ol><h2>$1</h2><ol>",
@@ -135,7 +135,7 @@ fun init() : ArrayList<FormatRule> {
     return result
 }
 
-class ExtendedWikiHelperKt() : SimpleWikiHelper() {
+class ExtendedWikiHelper(): SimpleWikiHelper() {
     /**
     * Query the Wiktionary API to pick a random dictionary word. Will try
     * multiple times to find a valid word before giving up.
@@ -144,9 +144,10 @@ class ExtendedWikiHelperKt() : SimpleWikiHelper() {
     * @throws ApiException If any connection or server error occurs.
     * @throws ParseException If there are problems parsing the response.
     */
-    public fun getRandomWord() : String? {
+    public fun getRandomWord(): String {
         // Keep trying a few times until we find a valid word
         var tries = 0;
+        var foundWord: String = "kotlin";
         while (tries++ < RANDOM_TRIES) {
             // Query the API for a random word
             val content = getUrlContent(WIKTIONARY_RANDOM)
@@ -156,21 +157,21 @@ class ExtendedWikiHelperKt() : SimpleWikiHelper() {
                 val query = response.getJSONObject("query")
                 val random = query?.getJSONArray("random")
                 val word = random?.getJSONObject(0)
-                val foundWord = word?.getString("title")
-
-                // If we found an actual word, and it wasn't rejected by our invalid
-                // filter, then accept and return it.
-                if (foundWord != null &&
-                !sInvalidWord?.matcher(foundWord)?.find().sure()) {
-                    return foundWord
+                val foundWordInt = word?.getString("title")
+                if (foundWordInt != null) {
+                    foundWord = foundWordInt
+                    println(content)
+                    if (sInvalidWord?.matcher(foundWord)?.find()!!) {
+                        return foundWord
+                    }
                 }
-            } catch (e : JSONException) {
+            } catch (e: JSONException) {
                 Log.e("Problem parsing API response", "", e)
             }
         }
 
         // No valid word found in number of tries, so return null
-        return null
+        return foundWord
     }
 
     /**
@@ -181,42 +182,39 @@ class ExtendedWikiHelperKt() : SimpleWikiHelper() {
     * @param wikiText The raw text to format, with wiki-markup included.
     * @return HTML formatted content, ready for display in {@link WebView}.
     */
-    public fun formatWikiText(var wikiText : String?) : String? {
+    public fun formatWikiText(val wikiText: String?): String? {
         if (wikiText == null) {
             return null
         }
 
-        // Insert a fake last section into the document so our section splitter
-        // can correctly catch the last section.
-        wikiText = wikiText?.concat(STUB_SECTION)
+        var wikiTextInternal: String = wikiText
 
         // Read through all sections, keeping only those matching our filter,
         // and only including the first entry for each title.
         val foundSections = HashSet<String>()
-        val builder = StringBuilder()
+        val builder: StringBuilder = StringBuilder()
 
-        val sectionMatcher = sSectionSplit?.matcher(wikiText)
-        while (sectionMatcher?.find().sure()) {
+        val sectionMatcher = sSectionSplit?.matcher(wikiTextInternal)
+        while (sectionMatcher?.find()!!) {
             val title = sectionMatcher?.group(1)
-            if (!foundSections.contains(title) &&
-            sValidSections?.matcher(title)?.matches().sure()) {
+            if (!foundSections.contains(title) && sValidSections?.matcher(title)?.matches()!!) {
                 val sectionContent = sectionMatcher?.group()
-                foundSections.add(title.sure())
+                foundSections.add(title!!)
                 builder.append(sectionContent)
             }
         }
 
         // Our new wiki text is the selected sections only
-        wikiText = builder.toString()
+        wikiTextInternal = if (builder.length() > 0) builder.toString()!! else ""
 
         // Apply all formatting rules, in order, to the wiki text
         for (rule in sFormatRules) {
-            wikiText = rule.apply(wikiText.sure())
+            wikiTextInternal = rule.apply(wikiTextInternal)
         }
 
         // Return the resulting HTML with style sheet, if we have content left
-        if (!TextUtils.isEmpty(wikiText)) {
-            return STYLE_SHEET + wikiText
+        if (!TextUtils.isEmpty(wikiTextInternal)) {
+            return STYLE_SHEET + wikiTextInternal
         } else {
             return null
         }

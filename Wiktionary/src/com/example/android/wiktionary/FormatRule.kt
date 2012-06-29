@@ -6,7 +6,7 @@ class FormatRule(var pattern: String, var mReplaceWith: String, var flags: Int =
     var mPattern: Pattern = init()
 
     fun init(): Pattern {
-       return Pattern.compile(pattern, flags).sure()
+       return Pattern.compile(pattern, flags)!!
     }
 
     /**
@@ -15,7 +15,7 @@ class FormatRule(var pattern: String, var mReplaceWith: String, var flags: Int =
     */
     public fun apply(val input: String): String {
         val m = mPattern.matcher(input)
-        return m?.replaceAll(mReplaceWith).sure()
+        return m?.replaceAll(mReplaceWith)!!
     }
 
 }

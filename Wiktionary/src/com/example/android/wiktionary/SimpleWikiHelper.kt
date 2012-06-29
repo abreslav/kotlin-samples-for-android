@@ -53,7 +53,7 @@ open class SimpleWikiHelper {
 
         // Query the API for content
         val content = getUrlContent(String.format(WIKTIONARY_PAGE,
-                encodedTitle, expandClause).sure())
+                encodedTitle, expandClause)!!)
         try {
             // Drill into the JSON response to find the content body
             val response = JSONObject(content)
@@ -62,7 +62,7 @@ open class SimpleWikiHelper {
             val page = pages?.getJSONObject(pages?.keys()?.next() as String)
             val revisions = page?.getJSONArray("revisions")
             val revision = revisions?.getJSONObject(0)
-            return revision?.getString("*").sure()
+            return revision?.getString("*")!!
         } catch (e : JSONException) {
             println(content)
             return null
@@ -85,31 +85,30 @@ open class SimpleWikiHelper {
         request.setHeader("User-Agent", sUserAgent)
 
         try {
-            val response = client.execute(request)
+            val response = client.execute(request)!!
 
             // Check if server response is valid
-            val status = response?.getStatusLine()
+            val status = response.getStatusLine()
             if (status?.getStatusCode() != 200) {
                 Log.e("Invalid response from server: " + status.toString(), "")
                 return null
             }
 
             // Pull content stream from response
-            val entity = response?.getEntity()
+            val entity = response.getEntity()
             val inputStream = entity?.getContent()
 
             val content = ByteArrayOutputStream()
 
             // Read response into a buffered stream
-            var readBytes : Int?
-            readBytes = inputStream?.read(sBuffer)
+            var readBytes = inputStream?.read(sBuffer)!!
             while (readBytes != - 1) {
-                content.write(sBuffer, 0, readBytes.sure())
-                readBytes = inputStream?.read(sBuffer)
+                content.write(sBuffer, 0, readBytes)
+                readBytes = inputStream?.read(sBuffer)!!
             }
 
             // Return result from buffered stream
-            return java.lang.String(content.toByteArray()).toString().sure()
+            return content.toString()
 
         } catch (e : IOException ) {
             Log.e("Problem communicating with API", "", e)
