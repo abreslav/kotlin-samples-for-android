@@ -1,0 +1,120 @@
+Compiled from "StandardFromJLangIterablesLazy.kt"
+public class kotlin.namespace$take$2$1 extends jet.Function1
+  SourceFile: "StandardFromJLangIterablesLazy.kt"
+  minor version: 0
+  major version: 50
+  Constant pool:
+const #1 = Asciz	kotlin/namespace$take$2$1;
+const #2 = class	#1;	//  kotlin/namespace$take$2$1
+const #3 = Asciz	jet/Function1;
+const #4 = class	#3;	//  jet/Function1
+const #5 = Asciz	StandardFromJLangIterablesLazy.kt;
+const #6 = Asciz	invoke;
+const #7 = Asciz	(Ljava/lang/Object;)Ljava/lang/Object;;
+const #8 = Asciz	(Ljava/lang/Object;)Z;
+const #9 = NameAndType	#6:#8;//  invoke:(Ljava/lang/Object;)Z
+const #10 = Method	#2.#9;	//  kotlin/namespace$take$2$1.invoke:(Ljava/lang/Object;)Z
+const #11 = Asciz	java/lang/Boolean;
+const #12 = class	#11;	//  java/lang/Boolean
+const #13 = Asciz	valueOf;
+const #14 = Asciz	(Z)Ljava/lang/Boolean;;
+const #15 = NameAndType	#13:#14;//  valueOf:(Z)Ljava/lang/Boolean;
+const #16 = Method	#12.#15;	//  java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+const #17 = Asciz	$count;
+const #18 = Asciz	Ljet/runtime/SharedVar$Int;;
+const #19 = NameAndType	#17:#18;//  $count:Ljet/runtime/SharedVar$Int;
+const #20 = Field	#2.#19;	//  kotlin/namespace$take$2$1.$count:Ljet/runtime/SharedVar$Int;
+const #21 = Asciz	jet/runtime/SharedVar$Int;
+const #22 = class	#21;	//  jet/runtime/SharedVar$Int
+const #23 = Asciz	ref;
+const #24 = Asciz	I;
+const #25 = NameAndType	#23:#24;//  ref:I
+const #26 = Field	#22.#25;	//  jet/runtime/SharedVar$Int.ref:I
+const #27 = Asciz	$n;
+const #28 = NameAndType	#27:#24;//  $n:I
+const #29 = Field	#2.#28;	//  kotlin/namespace$take$2$1.$n:I
+const #30 = Asciz	it;
+const #31 = Asciz	Ljava/lang/Object;;
+const #32 = Asciz	<init>;
+const #33 = Asciz	(Ljet/runtime/SharedVar$Int;I)V;
+const #34 = Asciz	()V;
+const #35 = NameAndType	#32:#34;//  "<init>":()V
+const #36 = Method	#4.#35;	//  jet/Function1."<init>":()V
+const #37 = Asciz	Code;
+const #38 = Asciz	LocalVariableTable;
+const #39 = Asciz	LineNumberTable;
+const #40 = Asciz	StackMapTable;
+const #41 = Asciz	SourceFile;
+
+{
+public jet.runtime.SharedVar$Int $count;
+  Signature: Ljet/runtime/SharedVar$Int;
+
+
+public int $n;
+  Signature: I
+
+
+public java.lang.Object invoke(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Ljava/lang/Object;
+  Code:
+   Stack=2, Locals=2, Args_size=2
+   0:	aload_0
+   1:	aload_1
+   2:	invokespecial	#10; //Method invoke:(Ljava/lang/Object;)Z
+   5:	invokestatic	#16; //Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+   8:	areturn
+
+public final boolean invoke(java.lang.Object);
+  Signature: (Ljava/lang/Object;)Z
+  Code:
+   Stack=4, Locals=2, Args_size=2
+   0:	aload_0
+   1:	getfield	#20; //Field $count:Ljet/runtime/SharedVar$Int;
+   4:	dup
+   5:	dup
+   6:	getfield	#26; //Field jet/runtime/SharedVar$Int.ref:I
+   9:	iconst_1
+   10:	iadd
+   11:	putfield	#26; //Field jet/runtime/SharedVar$Int.ref:I
+   14:	getfield	#26; //Field jet/runtime/SharedVar$Int.ref:I
+   17:	pop
+   18:	aload_0
+   19:	getfield	#20; //Field $count:Ljet/runtime/SharedVar$Int;
+   22:	getfield	#26; //Field jet/runtime/SharedVar$Int.ref:I
+   25:	aload_0
+   26:	getfield	#29; //Field $n:I
+   29:	if_icmple	36
+   32:	iconst_0
+   33:	goto	37
+   36:	iconst_1
+   37:	ireturn
+  LocalVariableTable: 
+   Start  Length  Slot  Name   Signature
+   0      38      0    it       Ljava/lang/Object;
+
+  LineNumberTable: 
+   line 93: 0
+
+  StackMapTable: number_of_entries = 2
+   frame_type = 36 /* same */
+   frame_type = 64 /* same_locals_1_stack_item */
+     stack = [ int ]
+
+
+public kotlin.namespace$take$2$1(jet.runtime.SharedVar$Int, int);
+  Signature: (Ljet/runtime/SharedVar$Int;I)V
+  Code:
+   Stack=2, Locals=3, Args_size=3
+   0:	aload_0
+   1:	invokespecial	#36; //Method jet/Function1."<init>":()V
+   4:	aload_0
+   5:	aload_1
+   6:	putfield	#20; //Field $count:Ljet/runtime/SharedVar$Int;
+   9:	aload_0
+   10:	iload_2
+   11:	putfield	#29; //Field $n:I
+   14:	return
+
+}
+
