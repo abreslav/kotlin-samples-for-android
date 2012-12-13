@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Wiktionary" default="build" basedir="">
+
+  <property name="sdk.dir" value="../dependencies/android-sdk"/>
+  <property name="target" value="android-16"/>
+
+  <import file="${sdk.dir}/tools/ant/build.xml"/>
+
+  <target name="build">
+      <antcall target="release"/>
+  </target>
+
+</project>
