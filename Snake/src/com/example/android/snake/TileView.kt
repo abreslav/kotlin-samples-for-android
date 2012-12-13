@@ -20,14 +20,14 @@ open class TileView(context: Context, attrs: AttributeSet): View(context, attrs)
     private var mTileSize: Int = 1
 
     {
-        val a = context.obtainStyledAttributes(attrs, R.styleable.TileView).sure()
+        val a = context.obtainStyledAttributes(attrs, R.styleable.TileView)!!
         mTileSize = a.getInt(R.styleable.TileView_tileSize, 12)
         a.recycle()
     }
 
 
     private var mTileArray: Array<Bitmap?> = Array<Bitmap?>(0) {null}
-    private var mTileGrid: ArrayList<ArrayList<Integer>> = ArrayList<ArrayList<Integer>>()
+    private var mTileGrid: MutableList<MutableList<Int>> = ArrayList<MutableList<Int>>()
     private val mPaint: Paint = Paint()
 
     var mXTileCount: Int = 0
@@ -49,9 +49,9 @@ open class TileView(context: Context, attrs: AttributeSet): View(context, attrs)
         mXOffset = ((w - (mTileSize * mXTileCount)) / 2)
         mYOffset = ((h - (mTileSize * mYTileCount)) / 2)
         for (i in 0..mXTileCount) {
-            val innerArray = ArrayList<Integer>()
+            val innerArray: MutableList<Int> = ArrayList<Int>()
             for (j in 0..mYTileCount) {
-                innerArray.add(Integer(0))
+                innerArray.add(0)
             }
             mTileGrid.add(innerArray)
         }
@@ -75,7 +75,7 @@ open class TileView(context: Context, attrs: AttributeSet): View(context, attrs)
     }
     public open fun setTile(tileindex: Int, x: Int, y: Int): Unit {
         if (mTileGrid.size() > x && mTileGrid.get(x).size() > y) {
-            mTileGrid.get(x).set(y, Integer(tileindex))
+            mTileGrid.get(x).set(y, tileindex)
         } else {
             println("INDEX OUT OF BOUND " + x + " " + y + " " + tileindex)
         }
@@ -85,7 +85,7 @@ open class TileView(context: Context, attrs: AttributeSet): View(context, attrs)
         for (x in 0..mXTileCount) {
             for (y in 0..mYTileCount) {
                 if (mTileGrid.get(x).get(y) > 0) {
-                    val intValue = mTileGrid.get(x).get(y).intValue()
+                    val intValue = mTileGrid.get(x).get(y)
                     val bitmap = mTileArray.get(intValue)
                     if (bitmap == null) {
                         return

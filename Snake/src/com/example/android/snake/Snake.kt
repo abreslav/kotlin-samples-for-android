@@ -26,12 +26,12 @@ import android.graphics.drawable.Drawable
 class Snake(): Activity() {
     val mScreenWidth: Int
         get() {
-            return getWindowManager()?.getDefaultDisplay()?.getWidth().sure()
+            return getWindowManager()?.getDefaultDisplay()?.getWidth()!!
         }
 
     val mScreenHeight: Int
         get() {
-            return getWindowManager()?.getDefaultDisplay()?.getHeight().sure()
+            return getWindowManager()?.getDefaultDisplay()?.getHeight()!!
         }
 
     val mSnakeView: SnakeView
@@ -42,18 +42,17 @@ class Snake(): Activity() {
 
     private var ICICLE_KEY: String = "snake-view"
 
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
-
         setContentView(R.layout.snake_layout)
         mSnakeView.setTextView((findViewById(R.id.text) as TextView))
         if (savedInstanceState == null) {
             mSnakeView.setMode(READY)
         }
         else {
-            var map: Bundle? = savedInstanceState.getBundle(ICICLE_KEY)
+            val map = savedInstanceState.getBundle(ICICLE_KEY)
             if (map != null) {
-                mSnakeView.restoreState(map.sure())
+                mSnakeView.restoreState(map)
             }
             else {
                 mSnakeView.setMode(PAUSE)
@@ -61,26 +60,26 @@ class Snake(): Activity() {
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super<Activity>.onResume()
         mSnakeView.setMode(READY)
     }
 
-    protected override fun onPause(): Unit {
+    override fun onPause(): Unit {
         super<Activity>.onPause()
         mSnakeView.setMode(PAUSE)
     }
 
-    public override fun onSaveInstanceState(outState: Bundle?): Unit {
+    override fun onSaveInstanceState(outState: Bundle?): Unit {
         outState?.putBundle(ICICLE_KEY, mSnakeView.saveState())
     }
 
 
-    public override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.getAction() == MotionEvent.ACTION_DOWN) {
             mSnakeView.maybeStart()
-            val x = event?.getX().sure()
-            val y = event?.getY().sure()
+            val x = event?.getX()!!
+            val y = event?.getY()!!
             if (mNextDirection == NORTH || mNextDirection == SOUTH) {
                 if (x > mScreenWidth / 2) {
                     mSnakeView.setDirection("RIGHT")
@@ -100,6 +99,5 @@ class Snake(): Activity() {
         }
         return super<Activity>.onTouchEvent(event)
     }
-
 }
 

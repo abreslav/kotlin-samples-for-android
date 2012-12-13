@@ -9,7 +9,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
-import com.example.android.snake.SnakeView.Coordinate
+//import com.example.android.snake.SnakeView.Coordinate
 import com.example.android.snake.static.*
 import java.util.ArrayList
 import android.graphics.drawable.Drawable
@@ -32,12 +32,12 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
     fun initSnakeView() {
         setFocusable(true)
 
-        val r = this.getContext()?.getResources().sure()
+        val r = this.getContext()?.getResources()!!
 
         resetTiles(4)
-        loadTile(RED_STAR, r.getDrawable(R.drawable.redstar).sure())
-        loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar).sure())
-        loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar).sure())
+        loadTile(RED_STAR, r.getDrawable(R.drawable.redstar)!!)
+        loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar)!!)
+        loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar)!!)
 
     }
 
@@ -75,10 +75,10 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         val map = Bundle()
 
         map.putIntArray("mAppleList", coordArrayListToArray(mAppleList))
-        map.putInt("mDirection", Integer.valueOf(mDirection).sure())
-        map.putInt("mNextDirection", Integer.valueOf(mNextDirection).sure())
-        map.putLong("mMoveDelay", Long.valueOf(mMoveDelay).sure())
-        map.putLong("mScore", Long.valueOf(mScore).sure())
+        map.putInt("mDirection", Integer.valueOf(mDirection)!!)
+        map.putInt("mNextDirection", Integer.valueOf(mNextDirection)!!)
+        map.putLong("mMoveDelay", mMoveDelay.toLong())
+        map.putLong("mScore", mScore.toLong())
         map.putIntArray("mSnakeTrail", coordArrayListToArray(mSnakeTrail))
 
         return map
@@ -89,7 +89,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
 
         val count = coordinatesArray.size
         for (var index in 0..count) {
-            val  c = Coordinate(coordinatesArray[index].sure(), coordinatesArray[index + 1].sure())
+            val  c = Coordinate(coordinatesArray[index]!!, coordinatesArray[index + 1]!!)
             coordinatesArrayList.add(c)
             index += 2
         }
@@ -99,12 +99,12 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
     public fun restoreState(val icicle: Bundle) {
         setMode(PAUSE)
 
-        mAppleList = coordArrayToArrayList(icicle.getIntArray("mAppleList").sure())
+        mAppleList = coordArrayToArrayList(icicle.getIntArray("mAppleList")!!)
         mDirection = icicle.getInt("mDirection")
         mNextDirection = icicle.getInt("mNextDirection")
         mMoveDelay = icicle.getLong("mMoveDelay")
         mScore = icicle.getLong("mScore")
-        mSnakeTrail = coordArrayToArrayList(icicle.getIntArray("mSnakeTrail").sure())
+        mSnakeTrail = coordArrayToArrayList(icicle.getIntArray("mSnakeTrail")!!)
     }
 
     public override fun onKeyDown(val keyCode: Int, msg: KeyEvent?): Boolean {
@@ -143,25 +143,21 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
                 if (mDirection != SOUTH) {
                     mNextDirection = NORTH
                 }
-                setBackgroundImage(R.drawable.back_lr)
             }
             "DOWN" -> {
                 if (mDirection != NORTH) {
                     mNextDirection = SOUTH
                 }
-                setBackgroundImage(R.drawable.back_lr)
             }
             "LEFT" -> {
                 if (mDirection != EAST) {
                     mNextDirection = WEST
                 }
-                setBackgroundImage(R.drawable.back)
             }
             "RIGHT" -> {
                 if (mDirection != WEST) {
                     mNextDirection = EAST
                 }
-                setBackgroundImage(R.drawable.back)
             }
             else -> {
                 Log.e("error", "Incorrect direction")
@@ -197,14 +193,14 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
             return
         }
 
-        val res = getContext()?.getResources().sure()
+        val res = getContext()?.getResources()!!
         var str: CharSequence = ""
         when (newMode) {
             PAUSE -> {
-                str = res.getText(R.string.mode_pause).sure()
+                str = res.getText(R.string.mode_pause)!!
             }
             READY -> {
-                str = res.getText(R.string.mode_ready).sure()
+                str = res.getText(R.string.mode_ready)!!
             }
             LOSE -> {
                 str = res.getString(R.string.mode_lose_prefix) + mScore + res.getString(R.string.mode_lose_suffix)
@@ -239,7 +235,7 @@ public class SnakeView(val myContext: Context, val myAttrs: AttributeSet): TileV
         if (newCoord == null) {
             Log.e("SnakeView", "Somehow ended up with a null newCoord!")
         }
-        mAppleList.add(newCoord.sure())
+        mAppleList.add(newCoord!!)
     }
 
     public fun update() {
