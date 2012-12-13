@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Snake" default="build" basedir="">
+<project name="WeatherListWidget" default="build" basedir="">
 
-  <property file="ant.properties"/>
-
-  <loadproperties srcFile="project.properties"/>
-
-  <import file="custom_rules.xml" optional="true"/>
+  <property name="sdk.dir" value="../dependencies/android-sdk"/>
+  <property name="target" value="android-16"/>
 
   <import file="${sdk.dir}/tools/ant/build.xml"/>
 
