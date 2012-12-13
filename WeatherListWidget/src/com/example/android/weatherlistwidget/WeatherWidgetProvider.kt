@@ -90,7 +90,7 @@ public class WeatherWidgetProvider(): AppWidgetProvider() {
                 val appWidgetId = intent?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)!!
                 val city = intent?.getStringExtra(EXTRA_CITY_ID)!!
                 val formatStr = ctx?.getResources()?.getString(R.string.toast_format_string)!!
-                Toast.makeText(ctx, String.format(formatStr, city), Toast.LENGTH_SHORT)?.show()
+                Toast.makeText(ctx, java.lang.String.format(formatStr, city), Toast.LENGTH_SHORT)?.show()
             }
         super.onReceive(ctx, intent)
     }

@@ -38,16 +38,16 @@ open class StackRemoteViewsFactory(val context: Context?, val intent: Intent?): 
         var temp: Int = 0
         if (mCursor.moveToPosition(position))
         {
-            val cityColIndex: Int = mCursor.getColumnIndex(COLUMNS.CITY).sure()
-            val tempColIndex: Int = mCursor.getColumnIndex(COLUMNS.TEMPERATURE).sure()
+            val cityColIndex: Int = mCursor.getColumnIndex(COLUMNS.CITY)
+            val tempColIndex: Int = mCursor.getColumnIndex(COLUMNS.TEMPERATURE)
             city = mCursor.getString(cityColIndex)!!
             temp = mCursor.getInt(tempColIndex)
         }
-        val formatStr = context?.getResources()?.getString(R.string.item_format_string)
+        val formatStr = context?.getResources()?.getString(R.string.item_format_string)!!
         val itemId: Int = if (position % 2 == 0) R.layout.light_widget_item else  R.layout.dark_widget_item
 
         var rv = RemoteViews(context?.getPackageName(), itemId)
-        rv.setTextViewText(R.id.widget_item, String.format(formatStr, temp, city))
+        rv.setTextViewText(R.id.widget_item, java.lang.String.format(formatStr, temp, city))
         val fillInIntent = Intent()
         val extras = Bundle()
         extras.putString(EXTRA_CITY_ID, city)
