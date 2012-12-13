@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="android-4.1.1.4">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../dependencies/android-sdk/platforms/android-2.3.3_r02-linux/android.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

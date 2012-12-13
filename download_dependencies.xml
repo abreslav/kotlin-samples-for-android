@@ -7,10 +7,10 @@
         <mkdir dir="dependencies/android-sdk"/>
         <mkdir dir="dependencies/android-sdk/platforms"/>
 
-        <get src="https://dl-ssl.google.com/android/repository/android-2.3.3_r02-linux.zip"
-             dest="dependencies/download/android-2.3.3_r02-linux.zip" usetimestamp="true"/>
+        <get src="http://dl-ssl.google.com/android/repository/android-16_r03.zip"
+             dest="dependencies/download/android-16_r03.zip" usetimestamp="true"/>
 
-        <unzip src="dependencies/download/android-2.3.3_r02-linux.zip" dest="dependencies/android-sdk/platforms"/>
+        <unzip src="dependencies/download/android-16_r03.zip" dest="dependencies/android-sdk/platforms"/>
 
         <get src="http://dl-ssl.google.com/android/repository/platform-tools_r11-windows.zip"
              dest="dependencies/download/platform-tools_r11-windows.zip" usetimestamp="true"/>
