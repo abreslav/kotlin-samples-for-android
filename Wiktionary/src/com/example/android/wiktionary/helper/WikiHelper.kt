@@ -117,9 +117,9 @@ fun init(): ArrayList<FormatRule> {
 
     // Add internal links
     result.add(FormatRule("\\[\\[([^:\\|\\]]+)\\]\\]",
-            String.format("<a href=\"%s://%s/$1\">$1</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST).sure()))
+            java.lang.String.format("<a href=\"%s://%s/$1\">$1</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST)))
     result.add(FormatRule("\\[\\[([^:\\|\\]]+)\\|([^\\]]+)\\]\\]",
-            String.format("<a href=\"%s://%s/$1\">$2</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST).sure()))
+            java.lang.String.format("<a href=\"%s://%s/$1\">$2</a>", WIKI_AUTHORITY, WIKI_LOOKUP_HOST)))
 
     // Add bold and italic formatting
     result.add(FormatRule("'''(.+?)'''", "<b>$1</b>"))
@@ -161,7 +161,7 @@ class ExtendedWikiHelper(): SimpleWikiHelper() {
                 if (foundWordInt != null) {
                     foundWord = foundWordInt
                     println(content)
-                    if (sInvalidWord?.matcher(foundWord)?.find()!!) {
+                    if (sInvalidWord.matcher(foundWord).find()) {
                         return foundWord
                     }
                 }
@@ -194,18 +194,19 @@ class ExtendedWikiHelper(): SimpleWikiHelper() {
         val foundSections = HashSet<String>()
         val builder: StringBuilder = StringBuilder()
 
-        val sectionMatcher = sSectionSplit?.matcher(wikiTextInternal)
-        while (sectionMatcher?.find()!!) {
-            val title = sectionMatcher?.group(1)
-            if (!foundSections.contains(title) && sValidSections?.matcher(title)?.matches()!!) {
-                val sectionContent = sectionMatcher?.group()
-                foundSections.add(title!!)
+        val sectionMatcher = sSectionSplit.matcher(wikiTextInternal)
+        while (sectionMatcher.find()) {
+            val title = sectionMatcher.group(1)
+            if (title == null) continue
+            if (!foundSections.contains(title) && sValidSections.matcher(title).matches()) {
+                val sectionContent = sectionMatcher.group()
+                foundSections.add(title)
                 builder.append(sectionContent)
             }
         }
 
         // Our new wiki text is the selected sections only
-        wikiTextInternal = if (builder.length() > 0) builder.toString()!! else ""
+        wikiTextInternal = if (builder.length() > 0) builder.toString() else ""
 
         // Apply all formatting rules, in order, to the wiki text
         for (rule in sFormatRules) {

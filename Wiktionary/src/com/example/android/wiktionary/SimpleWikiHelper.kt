@@ -38,7 +38,7 @@ open class SimpleWikiHelper {
             // Read package name and version number from manifest
             val manager = context.getPackageManager()
             val info = manager?.getPackageInfo(context.getPackageName(), 0)
-            sUserAgent = String.format(context.getString(0x7f060003),
+            sUserAgent = java.lang.String.format(context.getString(0x7f060003)!!,
                     info?.packageName, info?.versionName)
 
         } catch(e : NameNotFoundException) {
@@ -52,8 +52,8 @@ open class SimpleWikiHelper {
         val expandClause = if (expandTemplates) WIKTIONARY_EXPAND_TEMPLATES else ""
 
         // Query the API for content
-        val content = getUrlContent(String.format(WIKTIONARY_PAGE,
-                encodedTitle, expandClause)!!)
+        val content = getUrlContent(java.lang.String.format(WIKTIONARY_PAGE,
+                encodedTitle, expandClause))
         try {
             // Drill into the JSON response to find the content body
             val response = JSONObject(content)

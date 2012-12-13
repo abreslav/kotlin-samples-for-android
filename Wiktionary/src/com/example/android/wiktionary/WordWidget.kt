@@ -66,7 +66,7 @@ class UpdateService() : Service() {
         }
 
         val views: RemoteViews
-        val matcher = Pattern.compile("(?s)\\{\\{wotd\\|(.+?)\\|(.+?)\\|([^#\\|]+).*?\\}\\}")?.matcher(pageContent)!!
+        val matcher = Pattern.compile("(?s)\\{\\{wotd\\|(.+?)\\|(.+?)\\|([^#\\|]+).*?\\}\\}").matcher(pageContent)
         if (matcher.find()) {
             // Build an update that holds the updated widget contents
             views = RemoteViews(context.getPackageName(), R.layout.widget_word)
@@ -77,8 +77,7 @@ class UpdateService() : Service() {
             views.setTextViewText(R.id.definition, matcher.group(3)?.trim())
 
             // When user clicks on widget, launch to Wiktionary definition page
-            val definePage = String.format("%s://%s/%s", WIKI_AUTHORITY,
-                    WIKI_LOOKUP_HOST, wordTitle)
+            val definePage = "$WIKI_AUTHORITY://$WIKI_LOOKUP_HOST/$wordTitle"
             val defineIntent = Intent(Intent.ACTION_VIEW, Uri.parse(definePage))
             val pendingIntent = PendingIntent.getActivity(context,
                     0 /* no requestCode */, defineIntent, 0 /* no flags */)
