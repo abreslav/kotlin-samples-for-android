@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Snake" default="build" basedir="">
+
+  <property file="ant.properties"/>
+
+  <loadproperties srcFile="project.properties"/>
+
+  <import file="custom_rules.xml" optional="true"/>
+
+  <import file="${sdk.dir}/tools/ant/build.xml"/>
+
+  <target name="build">
+      <antcall target="release"/>
+  </target>
+
+</project>
