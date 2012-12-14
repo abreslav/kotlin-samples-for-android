@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="download_android" default="download_android">
+<project name="download_android" default="download">
+
+    <target name="download">
+        <antcall target="download_libs"/>
+        <antcall target="download_android"/>
+    </target>
+
+    <target name="download_libs">
+        <get src="http://search.maven.org/remotecontent?filepath=com/google/android/android/4.1.1.4/android-4.1.1.4.jar"
+             dest="lib/android-4.1.1.4.jar" usetimestamp="true"/>
+
+        <get src="http://search.maven.org/remotecontent?filepath=xpp3/xpp3/1.1.4c/xpp3-1.1.4c.jar"
+             dest="lib/xpp3-1.1.4c.jar" usetimestamp="true"/>
+
+        <get src="http://search.maven.org/remotecontent?filepath=org/json/json/20090211/json-20090211.jar"
+             dest="lib/json-20090211.jar" usetimestamp="true"/>
+
+        <get src="http://search.maven.org/remotecontent?filepath=httpcomponents-httpcore/httpcore/4.0-alpha6/httpcore-4.0-alpha6.jar"
+             dest="lib/httpcore-4.0-alpha6.jar" usetimestamp="true"/>
+
+        <get src="http://search.maven.org/remotecontent?filepath=org/apache/httpcomponents/httpclient/4.2.2/httpclient-4.2.2.jar"
+             dest="lib/httpclient-4.2.2.jar" usetimestamp="true"/>
+    </target>
 
     <target name="download_android">
         <mkdir dir="dependencies"/>
