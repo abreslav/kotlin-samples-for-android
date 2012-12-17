@@ -43,13 +43,13 @@ public open class WeatherDataProvider(): ContentProvider() {
         sData.add(WeatherDataPoint("Nomanisan", 27))
         return true
     }
-    public override fun query(uri: Uri?, projection: Array<out String?>?, selection: String?, selectionArgs: Array<out String?>?, sortOrder: String?): Cursor? {
+    public override fun query(uri: Uri?, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor? {
         println(uri.toString())
         assert {(uri?.getPathSegments()?.isEmpty()!!)}
-        val c = MatrixCursor(array<String?>(COLUMNS.ID, COLUMNS.CITY, COLUMNS.TEMPERATURE))
+        val c = MatrixCursor(array(COLUMNS.ID, COLUMNS.CITY, COLUMNS.TEMPERATURE))
         for (i in 0..sData.size() - 1) {
             val data = sData.get(i)
-            c.addRow(array<Any?>(Integer(i), data.city, Integer((data.degrees))))
+            c.addRow(array(Integer(i), data.city, Integer((data.degrees))))
         }
         return c
     }
@@ -59,16 +59,16 @@ public open class WeatherDataProvider(): ContentProvider() {
     public override fun insert(uri: Uri?, values: ContentValues?): Uri? {
         return null
     }
-    public override fun delete(uri: Uri?, selection: String?, selectionArgs: Array<out String?>?): Int {
+    public override fun delete(uri: Uri?, selection: String?, selectionArgs: Array<out String>?): Int {
         return 0
     }
-    public override fun update(uri: Uri?, values: ContentValues?, selection: String?, selectionArgs: Array<out String?>?): Int {
+    public override fun update(uri: Uri?, values: ContentValues?, selection: String?, selectionArgs: Array<out String>?): Int {
         if (uri == null) {
             throw RuntimeException()
         }
         assert {((uri.getPathSegments()?.size())!! == 1)}
         val index = Integer.parseInt((uri.getPathSegments()?.get(0))!!)
-        val c = MatrixCursor(array<String?>(COLUMNS.ID, COLUMNS.CITY, COLUMNS.TEMPERATURE))
+        val c = MatrixCursor(array(COLUMNS.ID, COLUMNS.CITY, COLUMNS.TEMPERATURE))
         assert {(0 <= index && index < (sData.size()))}
         var data = sData.get(index)
         data.setDegree(values?.getAsInteger(COLUMNS.TEMPERATURE)!!)
